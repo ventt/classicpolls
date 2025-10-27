@@ -134,6 +134,19 @@ export default function Page() {
                         </button>
                     )}
                 </header>
+                {/* TAGLINE / HERO BLUR-BAR */}
+                <div
+                    className="relative rounded-xl border border-emerald-600/30
+                               bg-gradient-to-b from-emerald-900/30 via-zinc-900/30 to-zinc-900/20
+                               px-4 py-3 shadow-[0_0_0_1px_rgba(16,185,129,0.08)_inset,0_6px_20px_rgba(16,185,129,0.06)]
+                               backdrop-blur-sm">
+                    <p className="flex flex-wrap items-center gap-2 text-sm leading-relaxed text-center justify-center">
+                    <span className="font-semibold text-zinc-100">
+                         Community-powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want.
+                    </span>
+                    </p>
+                </div>
+
 
                 {/* FILTERS (fixed) */}
                 <section className="flex flex-wrap gap-2 items-center">
@@ -186,7 +199,7 @@ export default function Page() {
                 />
 
                 {/* TOPICS – ONLY THIS SCROLLS */}
-                <div className="max-h-[70vh] overflow-y-auto pr-1 fancy-scrollbar">
+                <div className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
                     <ul className="grid gap-3">
                         {topics.map((t) => (
                             <TopicCard
