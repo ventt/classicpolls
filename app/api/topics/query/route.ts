@@ -1,53 +1,124 @@
-// app/api/topics/query/route.ts (POST)
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 
 type Sort =
-    | { by: "ratio"; dir: "desc" | "asc" }
-    | { by: "popularity"; dir: "desc" | "asc" } // szavazatszám
-    | { by: "positive"; dir: "desc" | "asc" }
-    | { by: "negative"; dir: "desc" | "asc" };
+    | { by: "ratio"; dir: "asc" | "desc" }
+    | { by: "popularity"; dir: "asc" | "desc" } // total votes
+    | { by: "positive"; dir: "asc" | "desc" }
+    | { by: "negative"; dir: "asc" | "desc" };
 
 export async function POST(req: Request) {
-    const { categoryId, search, sort }: { categoryId?: string; search?: string; sort?: Sort } = await req.json();
+    const body = await req.json();
+    const categoryId: string | undefined = body?.categoryId || undefined;
+    const search: string | undefined = body?.search || undefined;
+    const sort: Sort = body?.sort || { by: "ratio", dir: "desc" };
+    const page = Math.max(1, Number(body?.page ?? 1));
+    const pageSize = Math.min(50, Math.max(5, Number(body?.pageSize ?? 12)));
+    const offset = (page - 1) * pageSize;
 
-    const where = {
-        ...(categoryId ? { categoryId } : {}),
-        ...(search
-            ? { title: { contains: search, mode: "insensitive" } }
-            : {}),
-    };
+    // WHERE feltételek
+    const whereClauses: Prisma.Sql[] = [];
+    const params: any[] = [];
 
-    const topics = await prisma.topic.findMany({
-        where,
-        include: {
-            votes: true,
-            category: true,
-        },
-    });
+    if (categoryId) {
+        params.push(categoryId);
+        whereClauses.push(Prisma.sql`t."categoryId" = ${Prisma.join([categoryId])}`);
+    }
+    if (search) {
+        const like = `%${search}%`;
+        params.push(like);
+        whereClauses.push(Prisma.sql`t."title" ILIKE ${like}`);
+    }
+
+
+    const whereSql =
+        whereClauses.length > 0
+            // @ts-ignore
+            ? Prisma.sql`WHERE ${Prisma.join(whereClauses, Prisma.sql` AND `)}`
+            : Prisma.empty;
+
+    // ORDER BY a kért rendezés szerint
+    const orderSql = (() => {
+        const dir = sort.dir.toUpperCase() === "ASC" ? Prisma.sql`ASC` : Prisma.sql`DESC`;
+        if (sort.by === "ratio") return Prisma.sql`ORDER BY ratio ${dir}, "createdAt" DESC`;
+        if (sort.by === "popularity") return Prisma.sql`ORDER BY total ${dir}, "createdAt" DESC`;
+        if (sort.by === "positive") return Prisma.sql`ORDER BY pos ${dir}, "createdAt" DESC`;
+        if (sort.by === "negative") return Prisma.sql`ORDER BY neg ${dir}, "createdAt" DESC`;
+        return Prisma.sql`ORDER BY ratio DESC, "createdAt" DESC`;
+    })();
+
+    // COUNT (összes találat)
+    // @ts-ignore
+    const countRows = await prisma.$queryRaw<
+        { count: bigint }[]
+    >(Prisma.sql`
+    SELECT COUNT(*)::bigint AS count
+    FROM "Topic" t
+    ${whereSql}
+  `);
+    const total = Number(countRows?.[0]?.count ?? 0);
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+    // Fő lekérdezés: aggregált szavazatok + arány, globális rendezéssel és LIMIT/OFFSET
+    // @ts-ignore
+    const rows = await prisma.$queryRaw<
+        {
+            id: string;
+            title: string;
+            description: string | null;
+            "categoryId": string;
+            "createdById": string;
+            "createdAt": Date;
+            categoryName: string | null;
+            pos: number;
+            neg: number;
+            total: number;
+            ratio: number;
+        }[]
+    >(Prisma.sql`
+    WITH agg AS (
+      SELECT
+        "topicId",
+        COUNT(*) FILTER (WHERE value > 0) AS pos,
+        COUNT(*) FILTER (WHERE value < 0) AS neg,
+        COUNT(*) AS total,
+        CASE
+          WHEN COUNT(*) = 0 THEN 0::float
+          ELSE (COUNT(*) FILTER (WHERE value > 0))::float / COUNT(*)::float
+        END AS ratio
+      FROM "Vote"
+      GROUP BY "topicId"
+    )
+    SELECT
+      t.id, t.title, t.description, t."categoryId", t."createdById", t."createdAt",
+      c.name AS "categoryName",
+      COALESCE(a.pos, 0) AS pos,
+      COALESCE(a.neg, 0) AS neg,
+      COALESCE(a.total, 0) AS total,
+      COALESCE(a.ratio, 0) AS ratio
+    FROM "Topic" t
+    LEFT JOIN agg a ON a."topicId" = t.id
+    LEFT JOIN "Category" c ON c.id = t."categoryId"
+    ${whereSql}
+    ${orderSql}
+    LIMIT ${pageSize} OFFSET ${offset}
+  `);
 
     // @ts-ignore
-    const withStats = topics.map((t) => {
-        // @ts-ignore
-        const pos = t.votes.filter((v) => v.value > 0).length;
-        // @ts-ignore
-        const neg = t.votes.filter((v) => v.value < 0).length;
-        const total = pos + neg;
-        const ratio = total === 0 ? 0 : pos / total; // pozitív arány
-        return { ...t, stats: { pos, neg, total, ratio } };
+    const items = rows.map(r => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        category: r.categoryName ? { name: r.categoryName } : null,
+        stats: { pos: Number(r.pos), neg: Number(r.neg), total: Number(r.total), ratio: Number(r.ratio) },
+    }));
+
+    return NextResponse.json({
+        items,
+        page,
+        pageSize,
+        total,
+        totalPages,
     });
-
-    const s = sort || { by: "ratio", dir: "desc" } as Sort; // alap: pozitív arány csökkenő
-    // @ts-ignore
-    withStats.sort((a, b) => {
-        const by = s.by;
-        const dir = s.dir === "desc" ? -1 : 1;
-        if (by === "ratio") return (a.stats.ratio - b.stats.ratio) * dir;
-        if (by === "popularity") return (a.stats.total - b.stats.total) * dir;
-        if (by === "positive") return (a.stats.pos - b.stats.pos) * dir;
-        if (by === "negative") return (a.stats.neg - b.stats.neg) * dir;
-        return 0;
-    }).reverse();
-
-    return NextResponse.json(withStats);
 }
