@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
+import TopicCard from "@/components/TopicCard";
+import FancySelect from "@/components/FancySelect";
+
 
 export default function Page() {
     const { data: session, status } = useSession();
     const [search, setSearch] = useState("");
     const [categoryId, setCategoryId] = useState<string | undefined>();
-    const [sort, setSort] = useState({ by: "ratio", dir: "desc" } as any);
+    const [sort, setSort] = useState({ by: "ratio", dir: "asc" } as any);
     const [categories, setCategories] = useState<any[]>([]);
     const [topics, setTopics] = useState<any[]>([]);
-
     const isLoading = status === "loading";
 
     const fetchData = async () => {
@@ -24,14 +27,10 @@ export default function Page() {
     };
 
     useEffect(() => {
-        fetch("/api/categories")
-            .then((r) => r.json())
-            .then(setCategories);
+        fetch("/api/categories").then((r) => r.json()).then(setCategories);
     }, []);
 
-    useEffect(() => {
-        fetchData();
-    }, [search, categoryId, sort]);
+    useEffect(() => { fetchData(); }, [search, categoryId, sort]);
 
     const handleVote = async (topicId: string, value: number) => {
         const res = await fetch("/api/votes", {
@@ -43,197 +42,119 @@ export default function Page() {
     };
 
     return (
-        <div className="min-h-screen grid grid-cols-12 gap-4 p-4 bg-gray-50">
-            {/* BAL oldali reklám */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border rounded-lg flex items-center justify-center bg-white">
-                Reklám
+        <div className="min-h-screen grid grid-cols-12 gap-4 p-4">
+            {/* LEFT ADS */}
+            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-zinc-400">Ad</span>
             </aside>
 
-            {/* TARTALOM */}
+            {/* MAIN */}
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
-                {/* FEJLÉC */}
-                <header className="flex items-center justify-between border-b pb-3">
-                    <h1 className="text-3xl font-bold text-indigo-700">WowVotes</h1>
+                {/* HEADER */}
+                <header className="flex items-center justify-between border-b border-zinc-800 pb-3">
+                    <h1
+                        className="text-5xl font-extrabold tracking-wide text-transparent bg-clip-text
+                                   tracking-wider bg-gradient-to-b from-emerald-200 via-lime-300
+                                   to-emerald-600 drop-shadow-[0_0_4px_rgba(50,255,150,0.25)]"
+                        style={{
+                            textShadow: `
+                              0 0 2px rgba(40, 180, 120, 0.25),
+                              0 0 6px rgba(50, 220, 150, 0.15)
+                            `,
+                        }}
+                    >
+                        Wow&nbsp;<span className="text-lime-300">Votes</span>
+                    </h1>
+
+
                     {isLoading ? (
-                        <div>Betöltés...</div>
+                        <div className="text-zinc-400">Loading...</div>
                     ) : session ? (
                         <div className="flex items-center gap-3">
-                            <img
-                                src={session.user?.image ?? ""}
-                                alt="avatar"
-                                className="w-8 h-8 rounded-full"
-                            />
+                            {session.user?.image ? (
+                                <img src={session.user.image} alt="avatar" className="w-8 h-8 rounded-full" />
+                            ) : (
+                                <div className="w-8 h-8 rounded-full bg-zinc-700" />
+                            )}
                             <span className="font-medium">{session.user?.name}</span>
+                            <Link
+                                href="/new-topic"
+                                className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
+                            >
+                                New Topic
+                            </Link>
                             <button
-                                className="px-3 py-1 border rounded hover:bg-gray-100"
+                                className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
                                 onClick={() => signOut()}
                             >
-                                Kilépés
+                                Logout
                             </button>
                         </div>
                     ) : (
                         <button
-                            className="px-3 py-1 border rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                            className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
                             onClick={() => signIn("discord")}
                         >
-                            Discord belépés
+                            Sign in with Discord
                         </button>
                     )}
                 </header>
 
-                {/* KERESŐ + SZŰRŐ */}
+                {/* FILTERS */}
                 <section className="flex flex-wrap gap-2 items-center">
                     <input
-                        className="border rounded px-3 py-2 flex-1"
-                        placeholder="Keresés…"
+                        className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500"
+                        placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <select
-                        className="border rounded px-3 py-2"
+                    <FancySelect
+                        ariaLabel="Filter by category"
+                        widthClass="w-56"
                         value={categoryId || ""}
-                        onChange={(e) =>
-                            setCategoryId(e.target.value || undefined)
-                        }
-                    >
-                        <option value="">Összes kategória</option>
-                        {categories.map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        className="border rounded px-3 py-2"
+                        onChange={(val) => setCategoryId(val || undefined)}
+                        options={[
+                            { label: "All categories", value: "" },
+                            ...categories.map((c: any) => ({ label: c.name, value: c.id })),
+                        ]}
+                    />
+                    <FancySelect
+                        ariaLabel="Sort topics"
+                        widthClass="w-56"
                         value={`${sort.by}:${sort.dir}`}
-                        onChange={(e) => {
-                            const [by, dir] = e.target.value.split(":");
+                        onChange={(val) => {
+                            const [by, dir] = val.split(":");
                             setSort({ by, dir });
                         }}
-                    >
-                        <option value="ratio:desc">Pozitív arány ↓ (alap)</option>
-                        <option value="ratio:asc">Pozitív arány ↑</option>
-                        <option value="popularity:desc">Népszerűség ↓</option>
-                        <option value="popularity:asc">Népszerűség ↑</option>
-                        <option value="positive:desc">Pozitív szavazat ↓</option>
-                        <option value="negative:desc">Negatív szavazat ↓</option>
-                    </select>
+                        options={[
+                            { label: "Most approved ↓ (default)", value: "ratio:asc" },
+                            { label: "Least approved ↑", value: "ratio:desc" },
+                            { label: "Most popular ↓", value: "popularity:asc" },
+                            { label: "Least popular ↑", value: "popularity:desc" },
+                            { label: "Most upvotes ↓", value: "positive:asc" },
+                            { label: "Most downvotes ↓", value: "negative:asc" },
+                        ]}
+                    />
                 </section>
 
-                {/* ÚJ TOPIC FORM */}
-                {session && (
-                    <TopicForm categories={categories} onCreated={fetchData} />
-                )}
-
-                {/* TOPIC LISTA */}
+                {/* TOPICS */}
                 <ul className="grid gap-3">
                     {topics.map((t) => (
-                        <li
+                        <TopicCard
                             key={t.id}
-                            className="border rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h3 className="font-semibold text-lg">{t.title}</h3>
-                                    <p className="text-sm opacity-80">
-                                        {t.category?.name}
-                                    </p>
-                                </div>
-                                {session && (
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            className="px-2 py-1 border rounded text-green-700 hover:bg-green-100"
-                                            onClick={() => handleVote(t.id, 1)}
-                                        >
-                                            👍
-                                        </button>
-                                        <button
-                                            className="px-2 py-1 border rounded text-red-700 hover:bg-red-100"
-                                            onClick={() => handleVote(t.id, -1)}
-                                        >
-                                            👎
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                            {t.description && (
-                                <p className="text-sm mt-2">{t.description}</p>
-                            )}
-                            <div className="text-xs mt-2 opacity-70">
-                                👍 {t.stats.pos} | 👎 {t.stats.neg} | arány{" "}
-                                {(t.stats.ratio * 100).toFixed(0)}%
-                            </div>
-                        </li>
+                            topic={t}
+                            onVote={handleVote}
+                            loggedIn={!!session}
+                        />
                     ))}
                 </ul>
+
             </main>
 
-            {/* JOBB oldali reklám */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border rounded-lg flex items-center justify-center bg-white">
-                Reklám
+            {/* RIGHT ADS */}
+            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-zinc-400">Ad</span>
             </aside>
-        </div>
-    );
-}
-
-// ÚJ TOPIC létrehozása
-function TopicForm({
-                       categories,
-                       onCreated,
-                   }: {
-    categories: any[];
-    onCreated: () => void;
-}) {
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [categoryId, setCategoryId] = useState("");
-
-    const submit = async () => {
-        if (!title || !categoryId) return alert("Töltsd ki a címet és kategóriát!");
-        await fetch("/api/topics", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, description, categoryId }),
-        });
-        setTitle("");
-        setDescription("");
-        onCreated();
-    };
-
-    return (
-        <div className="border rounded-lg p-3 flex flex-wrap gap-2 items-center bg-white shadow-sm">
-            <input
-                className="border rounded px-3 py-2 flex-[2] min-w-[200px]"
-                placeholder="Új topic címe"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <input
-                className="border rounded px-3 py-2 flex-[3] min-w-[200px]"
-                placeholder="Leírás (opcionális)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-            />
-            <select
-                className="border rounded px-3 py-2"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-            >
-                <option value="" disabled>
-                    Válassz kategóriát
-                </option>
-                {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                        {c.name}
-                    </option>
-                ))}
-            </select>
-            <button
-                className="px-3 py-2 border rounded bg-indigo-600 text-white hover:bg-indigo-700"
-                onClick={submit}
-            >
-                Indítás
-            </button>
         </div>
     );
 }
