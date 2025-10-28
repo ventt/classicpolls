@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import TopicInteractions from "@/components/TopicInteractions";
-import {notFound} from "next/navigation";
-import SiteHeader from "@/components/SiteHeader"; // ⬅ client component
+import SiteHeader from "@/components/SiteHeader"; // ✅ reuse shared header
 
 type TopicDetail = {
     id: string;
@@ -14,16 +14,19 @@ type TopicDetail = {
     createdAt: string;
 };
 
-/** base URL (env előnyben, különben request header) */
+/** base URL helper */
 async function getBaseUrl() {
     if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
-    const h = await headers(); // ⬅ await headers()
+    const h = await headers();
     const host = h.get("x-forwarded-host") ?? h.get("host");
-    const proto = h.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
+    const proto =
+        h.get("x-forwarded-proto") ??
+        (process.env.NODE_ENV === "development" ? "http" : "https");
     if (!host) return "http://localhost:3000";
     return `${proto}://${host}`;
 }
 
+/** topic fetch */
 async function getTopicAbs(id: string): Promise<TopicDetail | null> {
     const base = await getBaseUrl();
     const res = await fetch(`${base}/api/topics/${id}`, { cache: "no-store" });
@@ -31,48 +34,87 @@ async function getTopicAbs(id: string): Promise<TopicDetail | null> {
     return res.json();
 }
 
-export default async function TopicPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;                   // ⬅ await params
+export default async function TopicPage({
+                                            params,
+                                        }: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
     const data = await getTopicAbs(id);
-    if (!data) {
-        notFound();
-    }
+    if (!data) notFound();
 
     const base = await getBaseUrl();
-    const shareUrl = `${base}/topic/${data.id}`;   // ⬅ abszolút URL a ShareButtonnak
-    const posPct = data.stats.total ? Math.round((data.stats.pos / data.stats.total) * 100) : 0;
+    const shareUrl = `${base}/topic/${data.id}`;
 
     return (
-        <div className="max-w-5xl mx-auto p-4 md:p-6 flex flex-col gap-4">
-            <SiteHeader />
-            <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white">{data.title}</h1>
-                    <p className="text-sm text-zinc-400">{data.category?.name}</p>
+        <div className="min-h-screen grid grid-cols-12 gap-4 p-4">
+            {/* LEFT AD — same as homepage */}
+            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-zinc-400">Ad</span>
+            </aside>
+
+            {/* MAIN CONTENT */}
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
+                <SiteHeader />
+
+                <div className="flex items-start justify-between gap-4 mt-2">
+                    <div className="min-w-0">
+                        <h1 className="text-2xl md:text-3xl font-bold text-white">
+                            {data.title}
+                        </h1>
+                        <p className="text-sm text-zinc-400">{data.category?.name}</p>
+                    </div>
+                    <ShareButton url={shareUrl} title={data.title} />
                 </div>
-                <ShareButton url={shareUrl} title={data.title} />
-            </div>
 
-            {data.description && <p className="mt-3 text-zinc-200 leading-relaxed">{data.description}</p>}
+                {data.description && (
+                    <p className="mt-3 text-zinc-200 leading-relaxed">{data.description}</p>
+                )}
 
-            {/* ÚJ: interaktív szavazás + idővonal */}
-            <TopicInteractions topicId={data.id} initialStats={data.stats} />
+                {/* Interactive voting + recent voters */}
+                <TopicInteractions topicId={data.id} initialStats={data.stats} />
 
-            <div className="mt-6">
-                <a href="/" className="text-emerald-400 underline">← Back to list</a>
-            </div>
+                <div className="mt-6">
+                    <Link href="/" className="text-emerald-400 underline">
+                        ← Back to list
+                    </Link>
+                </div>
+            </main>
+
+            {/* RIGHT AD — same as homepage */}
+            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
+                <span className="text-zinc-400">Ad</span>
+            </aside>
         </div>
     );
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;                    // ⬅ await params
-    const base = await getBaseUrl();                // ⬅ await headers() közvetve
+/** SEO metadata */
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: Promise<{ id: string }>;
+}) {
+    const { id } = await params;
+    const base = await getBaseUrl();
     const url = `${base}/topic/${id}`;
+
     return {
         title: "Topic • WowVotes",
-        description: "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
-        openGraph: { url, type: "article", title: "Topic • WowVotes", description: "Community-powered Classic+ ideas: see what players truly want in World of Warcraft." },
-        twitter: { card: "summary", title: "Topic • WowVotes", description: "Community-powered Classic+ ideas: see what players truly want in World of Warcraft." },
+        description:
+            "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
+        openGraph: {
+            url,
+            type: "article",
+            title: "Topic • WowVotes",
+            description:
+                "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
+        },
+        twitter: {
+            card: "summary",
+            title: "Topic • WowVotes",
+            description:
+                "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
+        },
     };
 }
