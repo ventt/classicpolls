@@ -80,29 +80,21 @@ export default function TopicCard({
                 </div>
             </div>
 
-            {description ? <p className="text-sm text-zinc-300 mt-2">{description}</p> : null}
+            {description ? (
+                <div className="relative mt-2">
+                    <p className="text-sm text-zinc-300 leading-6 max-h-24 overflow-hidden fade-bottom">
+                        {description}
+                    </p>
+                </div>
+            ) : null}
 
+            {/* ratio bar + statok: változatlan */}
             <div className="mt-3">
                 <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
                     <div className="h-full bg-emerald-500" style={{ width: `${posPct}%` }} />
                 </div>
                 <div className="mt-1 text-xs text-zinc-400 flex items-center gap-3">
-                    {loggedIn && (
-                        <>
-                            <div className="flex items-center gap-1">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-emerald-400">
-                                    <path d="M12 4l-7 8h4v8h6v-8h4l-7-8z" fill="currentColor" />
-                                </svg>
-                                <span>{stats.pos}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-red-400">
-                                    <path d="M12 20l7-8h-4V4H9v8H5l7 8z" fill="currentColor" />
-                                </svg>
-                                <span>{stats.neg}</span>
-                            </div>
-                        </>
-                    )}
+                    {/* ... */}
                     <div className="opacity-70">{posPct}% positive</div>
                 </div>
             </div>
