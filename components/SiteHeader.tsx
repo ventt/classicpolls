@@ -27,7 +27,7 @@ export default function SiteHeader() {
                      0 0 6px rgba(80,255,160,0.15)`,
         }}
     >
-      WoW
+      Classic
     </span>
                     &nbsp;
                     <span
@@ -36,7 +36,7 @@ export default function SiteHeader() {
                  hover:from-emerald-200 hover:via-lime-200 hover:to-lime-300
                  transition-all duration-300"
                     >
-      Votes
+      Polls
     </span>
 
                     {/* Subtle underline animation */}
