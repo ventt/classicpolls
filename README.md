@@ -38,3 +38,59 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+Recent open reports:
+``` sql
+SELECT
+  r.id AS report_id,
+  r.reason,
+  r.details,
+  r.status,
+  r.createdAt AS reported_at,
+  r.handledBy,
+  r.handledAt,
+  r.note,
+  t.id AS topic_id,
+  t.title AS topic_title,
+  t.createdAt AS topic_created,
+  c.name AS category_name,
+  u.id AS reporter_id,
+  u.name AS reporter_name,
+  u.email AS reporter_email,
+  (SELECT COUNT(*) FROM "Report" rr WHERE rr."topicId" = t.id AND rr.status = 'OPEN') AS open_reports_for_topic,
+  (SELECT COUNT(*) FROM "Vote" v WHERE v."topicId" = t.id AND v.value > 0) AS upvotes,
+  (SELECT COUNT(*) FROM "Vote" v WHERE v."topicId" = t.id AND v.value < 0) AS downvotes
+FROM "Report" r
+LEFT JOIN "Topic" t ON t.id = r."topicId"
+LEFT JOIN "Category" c ON c.id = t."categoryId"
+LEFT JOIN "User" u ON u.id = r."reporterId"
+WHERE r.status = 'OPEN'
+ORDER BY r."createdAt" DESC
+LIMIT 200;
+```
+
+Topics with most open reports (aggregated)
+
+``` sql
+SELECT
+  t.id AS topic_id,
+  t.title,
+  t."createdById",
+  COUNT(r.*) FILTER (WHERE r.status = 'OPEN') AS open_reports,
+  COUNT(r.*) AS total_reports,
+  COALESCE(votes.pos,0) AS upvotes,
+  COALESCE(votes.neg,0) AS downvotes
+FROM "Topic" t
+LEFT JOIN "Report" r ON r."topicId" = t.id
+LEFT JOIN (
+  SELECT "topicId",
+    COUNT(*) FILTER (WHERE value > 0) AS pos,
+    COUNT(*) FILTER (WHERE value < 0) AS neg
+  FROM "Vote"
+  GROUP BY "topicId"
+) votes ON votes."topicId" = t.id
+GROUP BY t.id, votes.pos, votes.neg
+HAVING COUNT(r.*) FILTER (WHERE r.status = 'OPEN') > 0
+ORDER BY open_reports DESC, total_reports DESC
+LIMIT 100;
+```

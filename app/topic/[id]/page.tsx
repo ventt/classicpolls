@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import TopicInteractions from "@/components/TopicInteractions";
-import SiteHeader from "@/components/SiteHeader"; // ✅ reuse shared header
+import SiteHeader from "@/components/SiteHeader";
+import ReportButton from "@/components/ReportButton"; // ✅ reuse shared header
 
 type TopicDetail = {
     id: string;
@@ -64,7 +65,10 @@ export default async function TopicPage({
                         </h1>
                         <p className="text-sm text-zinc-400">{data.category?.name}</p>
                     </div>
-                    <ShareButton url={shareUrl} title={data.title} />
+                    <div className="flex gap-2">
+                        <ShareButton url={shareUrl} title={data.title} />
+                        <ReportButton topicId={data.id}/>
+                    </div>
                 </div>
 
                 {data.description && (

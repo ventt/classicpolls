@@ -23,6 +23,8 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+
+  Report Report[]
 }
 
 model Account {
@@ -82,6 +84,7 @@ model Topic {
 
   @@index([categoryId])
   @@index([createdById])
+  Report Report[]
 }
 
 model Vote {
@@ -97,4 +100,28 @@ model Vote {
   @@unique([topicId, userId])
   @@index([topicId])
   @@index([userId])
+}
+enum ReportStatus {
+  OPEN
+  DISMISSED
+  RESOLVED
+}
+
+model Report {
+  id         String      @id @default(cuid())
+  topicId    String
+  reporterId String?     // Anonymous reports allowed (optional)
+  reason     String      @db.VarChar(500)
+  details    String?     // optional longer free-text
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime    @default(now())
+  handledBy  String?     // admin user id who handled
+  handledAt  DateTime?
+  note       String?     // admin note about resolution
+
+  topic   Topic? @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  reporter User?  @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  @@index([topicId])
+  @@index([status])
+  @@index([reporterId])
 }
