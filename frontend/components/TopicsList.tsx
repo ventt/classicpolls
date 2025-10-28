@@ -41,7 +41,7 @@ export default function TopicsList({topics, onVote, loggedIn, pageSize = 12, hei
                 onNext={goNext}
             />
 
-            {/* SCROLLABLE LISTA */}
+            {/* SCROLLABLE LIST */}
             <div className={`${heightClass} overflow-y-auto pr-1 min-h-0`}>
                 <ul className="grid gap-3">
                     {pageItems.map((t) => (
