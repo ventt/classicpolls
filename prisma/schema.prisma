@@ -71,7 +71,7 @@ model Category {
 
 model Topic {
   id          String   @id @default(cuid())
-  title       String
+  title       String   @db.VarChar(75)
   description String?
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])

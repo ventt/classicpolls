@@ -5,48 +5,69 @@ import { useRouter } from "next/navigation";
 import FancySelect from "@/components/FancySelect";
 
 type Category = { id: string; name: string };
+const TITLE_LIMIT = 75;
 
 export default function NewTopicForm({ categories }: { categories: Category[] }) {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [categoryId, setCategoryId] = useState("");
+    const [categoryId, setCategoryId] = useState<string>(categories?.[0]?.id ?? ""); // ← default első kategória
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
     const submit = async () => {
         setErr(null);
-        if (!title || !categoryId) {
-            setErr("Please fill in the title and category!");
+
+        if (!title) {
+            setErr("Please fill in the title!");
             return;
         }
+        if (title.length > TITLE_LIMIT) {
+            setErr(`Title must be ${TITLE_LIMIT} characters or fewer.`);
+            return;
+        }
+        if (!categoryId) {
+            setErr("Please select a category!");
+            return;
+        }
+
         setLoading(true);
-        const res = await fetch("/api/topics", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, description, categoryId }),
-        });
-        setLoading(false);
-
-        if (!res.ok) {
-            const j = await res.json().catch(() => ({}));
-            setErr(j?.error ?? "Saving failed");
-            return;
+        try {
+            const res = await fetch("/api/topics", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, description, categoryId }),
+            });
+            const j = await res.json().catch(() => null); // ← mindig próbáljuk olvasni a hibaüzenetet
+            if (!res.ok) {
+                setErr(j?.error ?? `${res.status} ${res.statusText}`);
+                return;
+            }
+            router.push("/");
+            router.refresh();
+        } finally {
+            setLoading(false);
         }
-        router.push("/");
-        router.refresh();
     };
-
 
     return (
         <div className="flex flex-col gap-3">
             {err && <div className="text-red-400 text-sm">{err}</div>}
 
-            <label className="text-sm font-medium text-zinc-300">Title</label>
+            {/* Title + counter (ahogy már csináltuk) */}
+            <label className="text-sm font-medium text-zinc-300 flex justify-between items-center">
+                <span>Title</span>
+                <span className={`text-xs ${title.length > TITLE_LIMIT ? "text-red-400" : "text-zinc-500"}`}>
+          {title.length} / {TITLE_LIMIT}
+        </span>
+            </label>
             <input
-                className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2"
+                className={`border rounded-lg px-3 py-2 bg-zinc-900 text-zinc-100 border-zinc-800 focus:outline-none focus:ring-1 ${
+                    title.length > TITLE_LIMIT ? "border-red-600 focus:ring-red-600" : "focus:ring-indigo-500"
+                }`}
                 placeholder="Enter topic title"
                 value={title}
+                maxLength={TITLE_LIMIT + 1}
                 onChange={(e) => setTitle(e.target.value)}
             />
 
@@ -62,15 +83,11 @@ export default function NewTopicForm({ categories }: { categories: Category[] })
 
             <label className="text-sm font-medium text-zinc-300">Category</label>
             <FancySelect
-                ariaLabel="Filter by category"
+                ariaLabel="Select category"
                 widthClass="w-56"
-                value={categoryId || ""}
-                // @ts-ignore
-                onChange={(val) => setCategoryId(val || undefined)}
-                options={[
-                    { label: "All categories", value: "" },
-                    ...categories.map((c: any) => ({ label: c.name, value: c.id })),
-                ]}
+                value={categoryId}
+                onChange={(val: string) => setCategoryId(val)} // ← mindig stringet állíts
+                options={categories.map((c) => ({ label: c.name, value: c.id }))} // ← nincs "All categories"
             />
 
             <div className="flex gap-2 mt-2">
@@ -92,3 +109,4 @@ export default function NewTopicForm({ categories }: { categories: Category[] })
         </div>
     );
 }
+

@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-import ShareButton from "@/components/ShareButton"; // ⬅ client component
+import ShareButton from "@/components/ShareButton";
+import TopicInteractions from "@/components/TopicInteractions"; // ⬅ client component
 
 type TopicDetail = {
     id: string;
@@ -51,22 +52,16 @@ export default async function TopicPage({ params }: { params: Promise<{ id: stri
                     <h1 className="text-2xl md:text-3xl font-bold text-white">{data.title}</h1>
                     <p className="text-sm text-zinc-400">{data.category?.name}</p>
                 </div>
-                <ShareButton url={shareUrl} title={data.title} /> {/* ⬅ NINCS onClick a Serverben */}
+                <ShareButton url={shareUrl} title={data.title} />
             </div>
 
             {data.description && <p className="mt-3 text-zinc-200 leading-relaxed">{data.description}</p>}
 
-            <div className="mt-5">
-                <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
-                    <div className="h-full bg-emerald-500" style={{ width: `${posPct}%` }} />
-                </div>
-                <div className="mt-2 text-sm text-zinc-400">
-                    {posPct}% positive • {data.stats.pos} up / {data.stats.neg} down • {data.stats.total} votes
-                </div>
-            </div>
+            {/* ÚJ: interaktív szavazás + idővonal */}
+            <TopicInteractions topicId={data.id} initialStats={data.stats} />
 
             <div className="mt-6">
-                <Link href="/" className="text-emerald-400 underline">← Back to list</Link>
+                <a href="/" className="text-emerald-400 underline">← Back to list</a>
             </div>
         </div>
     );
