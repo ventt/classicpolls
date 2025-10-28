@@ -1,0 +1,16 @@
+insert into api.category (name)
+values  ('PvP'),
+        ('Quests'),
+        ('World'),
+        ('Dungeons'),
+        ('Raids'),
+        ('Systems'),
+        ('UI'),
+        ('Addons'),
+        ('Classes'),
+        ('Races'),
+        ('Talents'),
+        ('Graphics'),
+        ('Lore'),
+        ('Professions'),
+        ('Other');

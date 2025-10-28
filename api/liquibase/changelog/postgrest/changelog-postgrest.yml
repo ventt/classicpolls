@@ -3,7 +3,7 @@ databaseChangeLog:
         file: changelog/postgrest/init-roles.sql
     - includeAll:
         path: changelog/postgrest/functions
-#    - includeAll:
-#        path: changelog/postgrest/policies
+    - includeAll:
+        path: changelog/postgrest/policies
 #    - includeAll:
 #        path: changelog/postgrest/views

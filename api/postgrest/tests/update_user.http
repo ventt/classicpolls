@@ -1,20 +1,10 @@
-POST http://localhost:3001/rpc/jwt_sub
-Authorization: Bearer {{token}}
-Accept: application/json
-
-> {%
-client.test("Should return user sub", function () {
-client.assert(response.body === "aksdjhaskjfhasjhaskd", 'Expected user id to be aksdjhaskjfhasjhaskd, got ' + response.body)
-})
-%}
-
 ###
 POST http://localhost:3001/rpc/update_user
 Authorization: Bearer {{token}}
 Accept: application/json
 
 > {%
-client.test("Should return 204", function () {
-client.assert(response.status === 204, 'Expected 204, got ' + response.status)
-})
+    client.test("Should return 204", function () {
+        client.assert(response.status === 204, 'Expected 204, got ' + response.status)
+    })
 %}

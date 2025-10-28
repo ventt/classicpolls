@@ -1,0 +1,33 @@
+### Test with Auth
+POST http://localhost:3001/vote?on_conflict=choice
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "poll_id": "f90c9216-92d2-4873-896a-dd1b1f25801e",
+  "choice": true
+}
+
+> {%
+    client.test("Test authorized poll creation is successful", function () {
+        client.assert(response.status === 201, "Expected status 201 Created, but got " + response.status)
+    })
+%}
+
+### Test with Auth
+POST http://localhost:3001/rpc/add_poll_vote
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "p_poll_id": "f90c9216-92d2-4873-896a-dd1b1f25801e",
+  "p_choice": false
+}
+
+> {%
+    client.test("Test authorized poll creation is successful", function () {
+        client.assert(response.status === 204, "Expected status 204 No Content, but got " + response.status)
+    })
+%}

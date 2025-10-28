@@ -1,0 +1,20 @@
+--liquibase formatted sql
+
+--changeset andras:enable-row-level-security-vote-table runOnChange:true
+ALTER TABLE api.poll
+    ENABLE ROW LEVEL SECURITY;
+
+--changeset andras:select-policy-poll-table runOnChange:true
+GRANT SELECT ON TABLE api.poll TO web_user;
+GRANT SELECT ON TABLE api.poll TO web_anon;
+
+--changeset andras:insert-policy-poll-table runOnChange:true
+GRANT INSERT (title, category_name, description) ON TABLE api.poll TO web_user;
+DROP POLICY IF EXISTS user_insert_policy ON api.poll;
+CREATE POLICY user_insert_policy ON api.poll FOR INSERT TO web_user
+    WITH CHECK (user_sub = jwt_sub());
+
+--changeset andras:delete-policy-poll-table runOnChange:true
+DROP POLICY IF EXISTS owner_delete_policy ON api.poll;
+CREATE POLICY owner_delete_policy ON api.poll FOR DELETE TO web_user
+    USING (user_sub = jwt_sub());

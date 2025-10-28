@@ -11,11 +11,12 @@ GRANT USAGE ON SCHEMA api TO authenticator;
 
 CREATE ROLE web_anon NOLOGIN;
 GRANT web_anon TO authenticator;
+GRANT USAGE ON SCHEMA api TO web_anon;
 
 /*
  * Web Users Sharing Role
  * https://postgrest.org/en/v12/explanations/db_authz.html#web-users-sharing-role
  */
-CREATE ROLE webuser NOLOGIN;
-GRANT webuser TO authenticator;
-GRANT USAGE ON SCHEMA api TO webuser;
+CREATE ROLE web_user NOLOGIN;
+GRANT web_user TO authenticator;
+GRANT USAGE ON SCHEMA api TO web_user;

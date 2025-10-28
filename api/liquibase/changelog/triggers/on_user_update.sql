@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
---changeset andras:immutable-user-sub unOnChange:true splitStatements:false
-CREATE OR REPLACE FUNCTION immutable_user_sub()
+--changeset andras:on-user-update runOnChange:true splitStatements:false
+CREATE OR REPLACE FUNCTION on_user_update()
     RETURNS TRIGGER AS
 $$
 BEGIN
@@ -12,8 +12,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER immutable_user_sub
+CREATE OR REPLACE TRIGGER on_user_update
     BEFORE UPDATE
     ON api.users
     FOR EACH ROW
-EXECUTE PROCEDURE immutable_user_sub();
+EXECUTE FUNCTION on_user_update();
