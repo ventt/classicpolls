@@ -11,8 +11,6 @@ type Sort = { by: "ratio" | "popularity" | "positive" | "negative"; dir: "asc" |
 
 export default function Page() {
     const { data: session, status } = useSession();
-    const isLoadingSession = status === "loading";
-
     // Filters / sorting
     const [search, setSearch] = useState("");
     const [categoryId, setCategoryId] = useState<string | undefined>();
