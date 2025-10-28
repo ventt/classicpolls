@@ -13,7 +13,7 @@ export async function GET(
     const votes = await prisma.vote.findMany({
         where: { topicId: id },
         orderBy: { createdAt: "desc" },
-        take: limit, // ⬅ max 6 (alapértelmezés)
+        take: limit,
         select: {
             id: true,
             value: true,

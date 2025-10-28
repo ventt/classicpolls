@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import TopicCard from "@/components/TopicCard";
 import FancySelect from "@/components/FancySelect";
 import SiteHeader from "@/components/SiteHeader";
+import AdLayout from "@/app/ad-layout";
 
 type Sort = { by: "ratio" | "popularity" | "positive" | "negative"; dir: "asc" | "desc" };
 
@@ -16,6 +16,7 @@ export default function Page() {
     // Filters / sorting
     const [search, setSearch] = useState("");
     const [categoryId, setCategoryId] = useState<string | undefined>();
+
     // Alap: legjobban elfogadott felül
     const [sort, setSort] = useState<Sort>({ by: "ratio", dir: "desc" });
 
@@ -83,31 +84,23 @@ export default function Page() {
     };
 
     return (
-        <div className="min-h-screen grid grid-cols-12 gap-4 p-4">
-            {/* LEFT ADS */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-zinc-400">Ad</span>
-            </aside>
-
-            {/* MAIN (fix header + filters; only list scrolls) */}
+        <AdLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
                 {/* HEADER */}
                 <SiteHeader/>
                 {/* TAGLINE / HERO BLUR-BAR */}
-                <div
+                <section
                     className="relative rounded-xl border border-emerald-600/30
-                               bg-gradient-to-b from-emerald-900/30 via-zinc-900/30 to-zinc-900/20
-                               px-4 py-3 shadow-[0_0_0_1px_rgba(16,185,129,0.08)_inset,0_6px_20px_rgba(16,185,129,0.06)]
-                               backdrop-blur-sm">
+                           bg-gradient-to-b from-emerald-900/30 via-zinc-900/30 to-zinc-900/20
+                           px-4 py-3 shadow-[0_0_0_1px_rgba(16,185,129,0.08)_inset,0_6px_20px_rgba(16,185,129,0.06)]
+                           backdrop-blur-sm">
                     <p className="flex flex-wrap items-center gap-2 text-sm leading-relaxed text-center justify-center">
-                    <span className="font-semibold text-zinc-100">
-                         Community-powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want.
-                    </span>
+                <span className="font-semibold text-zinc-100">
+                     Community-powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want.
+                </span>
                     </p>
-                </div>
-
-
-                {/* FILTERS (fixed) */}
+                </section>
+                {/* FILTERS*/}
                 <section className="flex flex-wrap gap-2 items-center">
                     <input
                         className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500"
@@ -115,7 +108,6 @@ export default function Page() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-
                     <FancySelect
                         ariaLabel="Filter by category"
                         widthClass="w-56"
@@ -126,7 +118,6 @@ export default function Page() {
                             ...categories.map((c: any) => ({ label: c.name, value: c.id })),
                         ]}
                     />
-
                     <FancySelect
                         ariaLabel="Sort topics"
                         widthClass="w-56"
@@ -145,7 +136,6 @@ export default function Page() {
                         ]}
                     />
                 </section>
-
                 {/* PAGINATION (top) */}
                 <PaginationBar
                     page={page}
@@ -156,9 +146,8 @@ export default function Page() {
                     onPageSize={(ps) => { setPageSize(ps); setPage(1); }}
                     loading={loading}
                 />
-
-                {/* TOPICS – ONLY THIS SCROLLS */}
-                <div className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
+                {/* TOPICS*/}
+                <section className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
                     <ul className="grid gap-3">
                         {topics.map((t) => (
                             <TopicCard
@@ -172,8 +161,7 @@ export default function Page() {
                             <li className="text-zinc-400 text-sm">No topics found.</li>
                         )}
                     </ul>
-                </div>
-
+                </section>
                 {/* PAGINATION (bottom) */}
                 <PaginationBar
                     page={page}
@@ -185,24 +173,11 @@ export default function Page() {
                     loading={loading}
                 />
             </main>
-
-            {/* RIGHT ADS */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-zinc-400">Ad</span>
-            </aside>
-        </div>
+        </AdLayout>
     );
 }
 
-function PaginationBar({
-                           page,
-                           totalPages,
-                           onPrev,
-                           onNext,
-                           pageSize,
-                           onPageSize,
-                           loading,
-                       }: {
+function PaginationBar({ page, totalPages, onPrev, onNext, pageSize, onPageSize, loading,}: {
     page: number;
     totalPages: number;
     onPrev: () => void;
@@ -212,11 +187,11 @@ function PaginationBar({
     loading: boolean;
 }) {
     return (
-        <div className="flex items-center justify-between text-sm text-zinc-300">
-      <span>
-        Page <span className="font-medium">{page}</span> / {totalPages}
-          {loading ? <span className="ml-2 text-zinc-500">Loading…</span> : null}
-      </span>
+        <section className="flex items-center justify-between text-sm text-zinc-300">
+            <span>
+            Page <span className="font-medium">{page}</span> / {totalPages}
+              {loading ? <span className="ml-2 text-zinc-500">Loading…</span> : null}
+            </span>
             <div className="flex items-center gap-3">
                 <FancySelect
                     ariaLabel="Page size"
@@ -247,6 +222,6 @@ function PaginationBar({
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

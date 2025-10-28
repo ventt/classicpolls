@@ -72,7 +72,6 @@ export default function TopicInteractions({ topicId, initialStats }: { topicId: 
                         <span className="font-medium text-zinc-200">{posPct}%</span> positive • {stats.pos} up / {stats.neg} down • {stats.total} votes
                     </div>
 
-                    {/* ⬇⬇⬇ csak bejelentkezve mutassuk a gombokat */}
                     {loggedIn ? (
                         <div className="flex items-center gap-2">
                             <button
@@ -99,7 +98,6 @@ export default function TopicInteractions({ topicId, initialStats }: { topicId: 
                             </button>
                         </div>
                     ) : (
-                        // Kijelentkezve: finom CTA
                         <button
                             onClick={() => signIn("discord")}
                             className="text-xs px-2 py-1 rounded-md border border-zinc-700 hover:bg-zinc-800 text-zinc-200 transition"
@@ -108,13 +106,11 @@ export default function TopicInteractions({ topicId, initialStats }: { topicId: 
                         </button>
                     )}
                 </div>
-
                 <div className="mt-2 h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
                     <div className="h-full bg-emerald-500" style={{ width: `${posPct}%` }} />
                 </div>
             </div>
 
-            {/* timeline (változatlan) */}
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/40">
                 <div className="px-4 py-3 border-b border-zinc-800 text-sm text-zinc-300">Recent votes</div>
 

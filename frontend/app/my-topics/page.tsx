@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
+import AdLessLayout from "@/app/adless-layout";
 
 type Item = {
     id: string;
@@ -56,75 +57,77 @@ export default function MyTopicsPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col gap-4 p-4 max-w-5xl mx-auto">
-            <SiteHeader />
+        <AdLessLayout>
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
+                <SiteHeader />
 
-            <div className="flex items-center justify-between mt-2">
-                <h2 className="text-xl font-semibold text-white">My Topics</h2>
-                <Link
-                    href="/new-topic"
-                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
-                >
-                    New Topic
-                </Link>
-            </div>
-
-            {err && <div className="text-sm text-red-400">{err}</div>}
-            {loading ? (
-                <div className="text-zinc-400 text-sm">Loading…</div>
-            ) : items.length === 0 ? (
-                <div className="text-zinc-400 text-sm">
-                    You haven’t created any topics yet.
+                <div className="flex items-center justify-between mt-2">
+                    <h2 className="text-xl font-semibold text-white">My Topics</h2>
+                    <Link
+                        href="/new-topic"
+                        className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
+                    >
+                        New Topic
+                    </Link>
                 </div>
-            ) : (
-                <ul className="grid gap-3">
-                    {items.map((t) => (
-                        <li
-                            key={t.id}
-                            className="border border-zinc-800 rounded-xl p-4 bg-zinc-900/60"
-                        >
-                            <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0">
-                                    <Link
-                                        href={`/topic/${t.id}`}
-                                        className="font-semibold text-lg text-white hover:underline"
+
+                {err && <div className="text-sm text-red-400">{err}</div>}
+                {loading ? (
+                    <div className="text-zinc-400 text-sm">Loading…</div>
+                ) : items.length === 0 ? (
+                    <div className="text-zinc-400 text-sm">
+                        You haven’t created any topics yet.
+                    </div>
+                ) : (
+                    <ul className="grid gap-3">
+                        {items.map((t) => (
+                            <li
+                                key={t.id}
+                                className="border border-zinc-800 rounded-xl p-4 bg-zinc-900/60"
+                            >
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <Link
+                                            href={`/topic/${t.id}`}
+                                            className="font-semibold text-lg text-white hover:underline"
+                                        >
+                                            {t.title}
+                                        </Link>
+                                        <p className="text-sm text-zinc-400">
+                                            {t.category?.name} •{" "}
+                                            {new Date(t.createdAt).toLocaleString()}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDelete(t.id)}
+                                        disabled={deleting === t.id}
+                                        className="px-3 py-1 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/40 disabled:opacity-50 transition text-red-200"
+                                        title="Delete topic"
                                     >
-                                        {t.title}
-                                    </Link>
-                                    <p className="text-sm text-zinc-400">
-                                        {t.category?.name} •{" "}
-                                        {new Date(t.createdAt).toLocaleString()}
-                                    </p>
+                                        {deleting === t.id ? "Deleting…" : "Delete"}
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => handleDelete(t.id)}
-                                    disabled={deleting === t.id}
-                                    className="px-3 py-1 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/40 disabled:opacity-50 transition text-red-200"
-                                    title="Delete topic"
-                                >
-                                    {deleting === t.id ? "Deleting…" : "Delete"}
-                                </button>
-                            </div>
 
-                            {t.description && (
-                                <p className="mt-2 text-sm text-zinc-300 line-clamp-3">
-                                    {t.description}
-                                </p>
-                            )}
+                                {t.description && (
+                                    <p className="mt-2 text-sm text-zinc-300 line-clamp-3">
+                                        {t.description}
+                                    </p>
+                                )}
 
-                            <div className="mt-2 text-xs text-zinc-400">
-                                {t.stats.total
-                                    ? `${Math.round(
-                                        (t.stats.pos / t.stats.total) * 100
-                                    )}% positive • ${t.stats.pos} up / ${t.stats.neg} down • ${
-                                        t.stats.total
-                                    } votes`
-                                    : "No votes yet"}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+                                <div className="mt-2 text-xs text-zinc-400">
+                                    {t.stats.total
+                                        ? `${Math.round(
+                                            (t.stats.pos / t.stats.total) * 100
+                                        )}% positive • ${t.stats.pos} up / ${t.stats.neg} down • ${
+                                            t.stats.total
+                                        } votes`
+                                        : "No votes yet"}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </main>
+        </AdLessLayout>
     );
 }

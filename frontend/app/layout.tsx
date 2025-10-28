@@ -1,9 +1,9 @@
 import "./globals.css";
-import { Providers } from "./providers"; // csak ha használod a next-auth SessionProvider-t
+import { Providers } from "./providers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Wow Votes",
+    title: "Classic Polls",
     description: "Community Classic+ voting",
 };
 
@@ -19,12 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 backgroundAttachment: "fixed",
             }}
         >
-        {/* Overlay a jobb olvashatóságért */}
+
         <div className="min-h-screen bg-black/70 backdrop-blur-sm">
-            <Providers>{children}</Providers>
-            {/* ha nincs next-auth SessionProvider, akkor csak:
-              {children}
-          */}
+                <Providers>{children}</Providers>
         </div>
         </body>
         </html>

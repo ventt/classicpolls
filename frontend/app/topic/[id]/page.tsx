@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import TopicInteractions from "@/components/TopicInteractions";
 import SiteHeader from "@/components/SiteHeader";
-import ReportButton from "@/components/ReportButton"; // ✅ reuse shared header
+import ReportButton from "@/components/ReportButton";
+import AdLayout from "@/app/ad-layout";
 
 type TopicDetail = {
     id: string;
@@ -15,31 +16,7 @@ type TopicDetail = {
     createdAt: string;
 };
 
-/** base URL helper */
-async function getBaseUrl() {
-    if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    const proto =
-        h.get("x-forwarded-proto") ??
-        (process.env.NODE_ENV === "development" ? "http" : "https");
-    if (!host) return "http://localhost:3000";
-    return `${proto}://${host}`;
-}
-
-/** topic fetch */
-async function getTopicAbs(id: string): Promise<TopicDetail | null> {
-    const base = await getBaseUrl();
-    const res = await fetch(`${base}/api/topics/${id}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return res.json();
-}
-
-export default async function TopicPage({
-                                            params,
-                                        }: {
-    params: Promise<{ id: string }>;
-}) {
+export default async function TopicPage({params}: {params: Promise<{ id: string }>;}){
     const { id } = await params;
     const data = await getTopicAbs(id);
     if (!data) notFound();
@@ -48,13 +25,7 @@ export default async function TopicPage({
     const shareUrl = `${base}/topic/${data.id}`;
 
     return (
-        <div className="min-h-screen grid grid-cols-12 gap-4 p-4">
-            {/* LEFT AD — same as homepage */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-zinc-400">Ad</span>
-            </aside>
-
-            {/* MAIN CONTENT */}
+        <AdLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
                 <SiteHeader />
 
@@ -84,41 +55,51 @@ export default async function TopicPage({
                     </Link>
                 </div>
             </main>
-
-            {/* RIGHT AD — same as homepage */}
-            <aside className="hidden lg:block col-span-2 sticky top-4 h-[80vh] border border-zinc-800 rounded-xl bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-zinc-400">Ad</span>
-            </aside>
-        </div>
+        </AdLayout>
     );
 }
-
 /** SEO metadata */
-export async function generateMetadata({
-                                           params,
-                                       }: {
-    params: Promise<{ id: string }>;
-}) {
+export async function generateMetadata({params}: {params: Promise<{ id: string }>; }) {
     const { id } = await params;
     const base = await getBaseUrl();
     const url = `${base}/topic/${id}`;
 
     return {
-        title: "Topic • WowVotes",
+        title: "Topic • Classic Polls",
         description:
             "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
         openGraph: {
             url,
             type: "article",
-            title: "Topic • WowVotes",
+            title: "Topic • Classic Polls",
             description:
                 "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
         },
         twitter: {
             card: "summary",
-            title: "Topic • WowVotes",
+            title: "Topic • Classic Polls",
             description:
                 "Community-powered Classic+ ideas: see what players truly want in World of Warcraft.",
         },
     };
+}
+
+/** topic fetch */
+async function getTopicAbs(id: string): Promise<TopicDetail | null> {
+    const base = await getBaseUrl();
+    const res = await fetch(`${base}/api/topics/${id}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    return res.json();
+}
+
+/** base URL helper */
+async function getBaseUrl() {
+    if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+    const h = await headers();
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const proto =
+        h.get("x-forwarded-proto") ??
+        (process.env.NODE_ENV === "development" ? "http" : "https");
+    if (!host) return "http://localhost:3000";
+    return `${proto}://${host}`;
 }

@@ -1,4 +1,3 @@
-// app/api/my-topics/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerAuth } from "@/lib/auth";

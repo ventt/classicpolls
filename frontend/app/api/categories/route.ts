@@ -1,6 +1,5 @@
-// app/api/categories/route.ts  (vagy src/app/api/categories/route.ts)
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // ha nincs path alias, használd a relatív utat: "../../../../../lib/prisma"
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
     const categories = await prisma.category.findMany({

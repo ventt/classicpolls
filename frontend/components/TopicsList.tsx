@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {useMemo, useState} from "react";
 import TopicCard from "@/components/TopicCard";
 
 type Topic = {
@@ -11,13 +11,7 @@ type Topic = {
     stats: { pos: number; neg: number; total: number; ratio: number };
 };
 
-export default function TopicsList({
-                                       topics,
-                                       onVote,
-                                       loggedIn,
-                                       pageSize = 12,
-                                       heightClass = "max-h-[70vh]", // állítható, pl. max-h-[65vh]
-                                   }: {
+export default function TopicsList({topics, onVote, loggedIn, pageSize = 12, heightClass = "max-h-[70vh]"}: {
     topics: Topic[];
     onVote: (topicId: string, value: 1 | -1) => void;
     loggedIn: boolean;
@@ -72,12 +66,7 @@ export default function TopicsList({
     );
 }
 
-function Pagination({
-                        page,
-                        totalPages,
-                        onPrev,
-                        onNext,
-                    }: {
+function Pagination({page, totalPages, onPrev, onNext}: {
     page: number;
     totalPages: number;
     onPrev: () => void;

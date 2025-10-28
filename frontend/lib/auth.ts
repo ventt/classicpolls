@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
-    session: { strategy: "jwt" }, // egyszerű és elég
+    session: { strategy: "jwt" },
 
     providers: [
         Discord({
@@ -19,10 +19,14 @@ export const authOptions: NextAuthOptions = {
     ],
 
     callbacks: {
+
+
         async session({ session, token }) {
-            // token.sub a felhasználó saját id-je
             if (session.user && token?.sub) {
                 (session.user as any).id = token.sub;
+                // @ts-ignore
+                console.log(session.user)
+                console.log(token)
             }
             return session;
         },

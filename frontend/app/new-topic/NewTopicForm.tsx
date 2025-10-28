@@ -38,7 +38,7 @@ export default function NewTopicForm({ categories }: { categories: Category[] })
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title, description, categoryId }),
             });
-            const j = await res.json().catch(() => null); // ← mindig próbáljuk olvasni a hibaüzenetet
+            const j = await res.json().catch(() => null);
             if (!res.ok) {
                 setErr(j?.error ?? `${res.status} ${res.statusText}`);
                 return;
