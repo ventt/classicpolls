@@ -1,0 +1,4 @@
+POST http://localhost:3001/rpc/jwt_sub
+Authorization: Bearer {{token}}
+Accept: application/json
+

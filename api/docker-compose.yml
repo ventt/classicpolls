@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  liquibase:
+    build:
+      context: .
+      dockerfile: liquibase/Dockerfile
+    restart: no
+    environment:
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-root.yml
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/postgres
+      LIQUIBASE_COMMAND_USERNAME: postgres
+      LIQUIBASE_COMMAND_PASSWORD: postgres
+    depends_on:
+      - postgres
+    command: update
+  postgrest:
+    image: postgrest/postgrest
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://authenticator:postgrest@postgres:5432/postgres
+      PGRST_DB_SCHEMAS: api
+      PGRST_SERVER_PORT: 3001
+      PGRST_DB_ANON_ROLE: web_anon
+      PGRST_DB_AGGREGATES_ENABLED: true
+      PGRST_JWT_SECRET: "{\"e\":\"AQAB\",\"kid\":\"f5641e8f-7040-4b00-a4a9-16e9f1be7284\",\"kty\":\"RSA\",\"n\":\"uoZPwUPUSI1GIPXHh05dxhnqiRic__4MXqkzQNhfnWefR7PzgwJ7CZoMKKFZ87mZFrR3dIZb4Z6S1fq2ruFW9GWeoZdwSW_M6lGZ9SzCi0I_cFmX_6CnvGrKjJvJRaDsEYRKLKTXsgtQEsItcD1OukTZJKfCVZJlqUZQDylgAUywZfQvcap9UlIRteOPlx9BDIWkUygttUUsYySpFlwKNRli2YMafxeKdZro8rwpTCQd76Qrmkxt-SjL10E5UjNNvS-SutgRJG5mdORkcMU58sy7_dxKh8KeVBMFCUR27YJyoAYHhrF5nkZAMop00T87O4srGzuDv1itQ7ON8-jaiQ\"}"
+      PGRST_OPENAPI_SECURITY_ACTIVE: true
+      PGRST_OPENAPI_MODE: ignore-privileges
+      PGRST_LOG_LEVEL: info
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - API_URL=http://localhost:3001/
+    depends_on:
+      - postgrest
+
+
+volumes:
+  postgres_data:
+
+
