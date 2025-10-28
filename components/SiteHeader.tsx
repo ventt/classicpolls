@@ -63,6 +63,12 @@ export default function SiteHeader() {
                     <Link href="/new-topic" className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition">
                         New Topic
                     </Link>
+                    <Link
+                        href="/my-topics"
+                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
+                    >
+                        My Topics
+                    </Link>
                     <button
                         className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
                         onClick={() => signOut()}
