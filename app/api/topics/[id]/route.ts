@@ -63,11 +63,10 @@ export async function GET(
         createdAt: r.createdAt,
     });
 }
+// app/api/topics/[id]/route.ts (részlet)
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
     const session = await getServerAuth();
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await ctx.params;
 
@@ -75,16 +74,12 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
         where: { id },
         select: { id: true, createdById: true },
     });
-
     if (!topic) return NextResponse.json({ error: "Not found" }, { status: 404 });
     if (topic.createdById !== session.user.id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    await prisma.$transaction([
-        prisma.vote.deleteMany({ where: { topicId: id } }),
-        prisma.topic.delete({ where: { id } }),
-    ]);
-
+    // A szavazatok automatikusan törlődnek a CASCADE miatt
+    await prisma.topic.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
 }

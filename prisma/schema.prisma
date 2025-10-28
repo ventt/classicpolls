@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // vagy ami nálad van
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,15 +15,14 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  // SAJÁT mezőid maradhatnak:
   discordId     String?  @unique
   createdAt     DateTime @default(now())
+
   votes         Vote[]
+  Topic         Topic[]
 
   accounts      Account[]
   sessions      Session[]
-
-  Topic Topic[]
 }
 
 model Account {
@@ -40,7 +39,7 @@ model Account {
   id_token          String?
   session_state     String?
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -62,11 +61,11 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// --- A SAJÁT modellek (változatlanul) ---
+// --- Saját modellek ---
 model Category {
-  id        String  @id @default(cuid())
-  name      String  @unique
-  topics    Topic[]
+  id     String  @id @default(cuid())
+  name   String  @unique
+  topics Topic[]
 }
 
 model Topic {
@@ -74,21 +73,28 @@ model Topic {
   title       String   @db.VarChar(75)
   description String?
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
   createdById String
-  createdBy   User     @relation(fields: [createdById], references: [id])
   createdAt   DateTime @default(now())
-  votes       Vote[]
+
+  category  Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdBy User     @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  votes     Vote[]
+
+  @@index([categoryId])
+  @@index([createdById])
 }
 
 model Vote {
   id        String   @id @default(cuid())
   topicId   String
-  topic     Topic    @relation(fields: [topicId], references: [id])
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   value     Int
   createdAt DateTime @default(now())
 
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([topicId, userId])
+  @@index([topicId])
+  @@index([userId])
 }
