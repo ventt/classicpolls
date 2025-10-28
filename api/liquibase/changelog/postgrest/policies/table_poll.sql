@@ -5,8 +5,16 @@ ALTER TABLE api.poll
     ENABLE ROW LEVEL SECURITY;
 
 --changeset andras:select-policy-poll-table runOnChange:true
-GRANT SELECT ON TABLE api.poll TO web_user;
 GRANT SELECT ON TABLE api.poll TO web_anon;
+DROP POLICY IF EXISTS public_select_policy ON api.poll;
+CREATE POLICY public_select_policy ON api.poll FOR SELECT TO web_anon
+    USING (true);
+
+GRANT SELECT ON TABLE api.poll TO web_user;
+DROP POLICY IF EXISTS user_select_policy ON api.poll;
+CREATE POLICY user_select_policy ON api.poll FOR SELECT TO web_user
+    USING (true);
+
 
 --changeset andras:insert-policy-poll-table runOnChange:true
 GRANT INSERT (title, category_name, description) ON TABLE api.poll TO web_user;

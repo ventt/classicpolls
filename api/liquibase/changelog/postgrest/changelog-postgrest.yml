@@ -5,5 +5,5 @@ databaseChangeLog:
         path: changelog/postgrest/functions
     - includeAll:
         path: changelog/postgrest/policies
-#    - includeAll:
-#        path: changelog/postgrest/views
+    - includeAll:
+        path: changelog/postgrest/views
