@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
-import TopicInteractions from "@/components/TopicInteractions"; // ⬅ client component
+import TopicInteractions from "@/components/TopicInteractions";
+import {notFound} from "next/navigation"; // ⬅ client component
 
 type TopicDetail = {
     id: string;
@@ -33,12 +34,7 @@ export default async function TopicPage({ params }: { params: Promise<{ id: stri
     const { id } = await params;                   // ⬅ await params
     const data = await getTopicAbs(id);
     if (!data) {
-        return (
-            <div className="p-6">
-                <p className="text-zinc-300">Topic not found.</p>
-                <Link href="/" className="text-emerald-400 underline">Back to list</Link>
-            </div>
-        );
+        notFound();
     }
 
     const base = await getBaseUrl();
