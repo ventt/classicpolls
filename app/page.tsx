@@ -5,6 +5,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import TopicCard from "@/components/TopicCard";
 import FancySelect from "@/components/FancySelect";
+import SiteHeader from "@/components/SiteHeader";
 
 type Sort = { by: "ratio" | "popularity" | "positive" | "negative"; dir: "asc" | "desc" };
 
@@ -91,49 +92,7 @@ export default function Page() {
             {/* MAIN (fix header + filters; only list scrolls) */}
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
                 {/* HEADER */}
-                <header className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                    <h1
-                        className="text-5xl font-extrabold tracking-wide text-transparent bg-clip-text tracking-wider
-                       bg-gradient-to-b from-emerald-200 via-lime-300 to-emerald-600
-                       drop-shadow-[0_0_4px_rgba(50,255,150,0.25)]"
-                        style={{
-                            textShadow: `0 0 2px rgba(40,180,120,0.25), 0 0 6px rgba(50,220,150,0.15)`,
-                        }}
-                    >
-                        Wow&nbsp;<span className="text-lime-300">Votes</span>
-                    </h1>
-                    {isLoadingSession ? (
-                        <div className="text-zinc-400">Loading...</div>
-                    ) : session ? (
-                        <div className="flex items-center gap-3">
-                            {session.user?.image ? (
-                                <img src={session.user.image} alt="avatar" className="w-8 h-8 rounded-full" />
-                            ) : (
-                                <div className="w-8 h-8 rounded-full bg-zinc-700" />
-                            )}
-                            <span className="font-medium">{session.user?.name}</span>
-                            <Link
-                                href="/new-topic"
-                                className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
-                            >
-                                New Topic
-                            </Link>
-                            <button
-                                className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
-                                onClick={() => signOut()}
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    ) : (
-                        <button
-                            className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
-                            onClick={() => signIn("discord")}
-                        >
-                            Sign in with Discord
-                        </button>
-                    )}
-                </header>
+                <SiteHeader/>
                 {/* TAGLINE / HERO BLUR-BAR */}
                 <div
                     className="relative rounded-xl border border-emerald-600/30
