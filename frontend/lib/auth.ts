@@ -1,8 +1,8 @@
-// lib/auth.ts
-import NextAuth, {getServerSession, type NextAuthOptions, User} from "next-auth";
 import Discord from "next-auth/providers/discord";
 import {importJWK, JWK, SignJWT} from "jose";
-import {postgrest} from "@/lib/postgrest";
+import {postgrestWithToken} from "@/lib/postgrest";
+import NextAuth, {getServerSession, NextAuthOptions, User} from "next-auth";
+
 
 // @ts-ignore
 const jwk = JSON.parse(process.env.API_JWK) as JWK;
@@ -28,25 +28,33 @@ export const authOptions: NextAuthOptions = {
         Discord({
             clientId: process.env.DISCORD_CLIENT_ID!,
             clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-            authorization: {params: {scope: "identify email"}},
+            authorization: {params: {scope: "identify"}},
         }),
     ],
 
     callbacks: {
+        async session({session, token}) {
+            if (token.accessToken) {
+                // @ts-ignore
+                session.accessToken = token.accessToken;
+            }
+
+            return session
+        },
         async jwt({token, user}) {
-            // Create encrypted API token on sign in
+
             if (user) {
-                const apiToken = await encrypt(user);
-                token.apiToken = apiToken;
+                const accessToken = await encrypt(user);
 
                 // Update user in api
-                await postgrest(apiToken).rpc('update_user')
+                await postgrestWithToken(accessToken).rpc('update_user')
+
+                token.accessToken = accessToken;
             }
-            return token;
+
+            return token
         }
-    },
-    // @ts-ignore
-    trustHost: true,
+    }
 };
 
 export const nextAuthHandler = NextAuth(authOptions);

@@ -1,15 +1,15 @@
 import SiteHeader from "@/components/SiteHeader";
 import AdLayout from "@/app/ad-layout";
 import {fetchCategories} from "@/lib/postgrest/category";
-import {getServerSession} from "next-auth";
 import PollList from "@/components/PollList";
 import {fetchPollsDetails} from "@/app/actions";
+import {getServerAuth} from "@/lib/auth";
 
 
 export default async function Page() {
     const initPageSize = 3
     const categories = await fetchCategories();
-    const session = await getServerSession();
+    const session = await getServerAuth();
     const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score', false);
 
     return (

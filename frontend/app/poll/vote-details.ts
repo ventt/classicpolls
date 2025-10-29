@@ -12,14 +12,13 @@ export interface VoteDetails extends GenericTable {
 }
 
 export const fetchVoteDetails = async (poll_id: string, limit: number) => {
-    const response = await postgrest()
+    const response = await (await postgrest())
         .from('vote')
         .select('user:users(name,image),choice,created_at')
         .order('created_at', {ascending: false})
         .eq('poll_id', poll_id)
         .limit(limit)
         .overrideTypes<any>()
-    console.log(response)
     return response.data as VoteDetails[];
 }
 

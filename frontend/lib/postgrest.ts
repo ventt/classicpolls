@@ -1,4 +1,5 @@
 import {PostgrestClient} from '@supabase/postgrest-js'
+import {getServerAuth} from "@/lib/auth";
 
 const regex = /^(\d+)-(\d+)\/(\d+)$/;
 
@@ -6,12 +7,21 @@ const regex = /^(\d+)-(\d+)\/(\d+)$/;
  * Create a postgrest client with the session
  * @param jwtToken
  */
-export function postgrest(jwtToken?: string) {
+export function postgrestWithToken(jwtToken?: string) {
     return new PostgrestClient(process.env.API_URL_POSTGREST!, {
         // @ts-ignore
         headers: {...jwtToken ? {Authorization: `Bearer ${jwtToken}`} : {}},
     })
 }
+
+/**
+ * Create a postgrest client with the session
+ */
+export async function postgrest() {
+    const session = await getServerAuth();
+    return postgrestWithToken(session?.accessToken)
+}
+
 
 export function extractContentRangeFromResponse(response: Response) {
     const contentRange = response.headers.get('content-range');
