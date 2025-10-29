@@ -1,0 +1,12 @@
+### All vote test without Auth
+GET http://localhost:3001/vote
+Accept: application/json
+
+### All vote test with Auth
+GET http://localhost:3001/vote
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Test without Auth
+GET http://localhost:3001/vote?select=user:users(name,image),choice,created_at&order=created_at.desc&poll_id=eq.401a7c03-770e-4487-ae79-188ab8876f27
+Accept: application/json

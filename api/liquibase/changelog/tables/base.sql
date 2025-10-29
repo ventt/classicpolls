@@ -5,6 +5,7 @@ CREATE TABLE api.users
 (
     sub        VARCHAR(32) PRIMARY KEY,
     name       VARCHAR(32)                                        NOT NULL,
+    image      VARCHAR(2083)                                      NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     enabled    BOOLEAN                  DEFAULT TRUE              NOT NULL
 );

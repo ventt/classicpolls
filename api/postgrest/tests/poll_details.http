@@ -1,8 +1,12 @@
 ### Test without Auth
-GET http://localhost:3001/polls_list?limit=6&order=approval_score.desc
+GET http://localhost:3001/poll_details?limit=6&order=approval_score.desc
 Accept: application/json
 Content-Type: application/json
 
+### Fetch single test without Auth
+GET http://localhost:3001/poll_details?id=eq.401a7c03-770e-4487-ae79-188ab8876f27
+Accept: application/vnd.pgrst.object+json
+Content-Type: application/json
 
 ### Test with Auth
 POST http://localhost:3001/poll

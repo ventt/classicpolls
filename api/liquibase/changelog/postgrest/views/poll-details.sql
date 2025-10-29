@@ -1,8 +1,8 @@
 --liquibase formatted sql
 
 --changeset andras:create-polls-list-view runOnChange:true
-DROP VIEW IF EXISTS api.polls_list;
-CREATE MATERIALIZED VIEW api.polls_list AS
+DROP VIEW IF EXISTS api.poll_details;
+CREATE VIEW api.poll_details AS
 
 WITH upvotes_count AS (SELECT pv.poll_id,
                               COUNT(*) AS upvotes
@@ -28,5 +28,5 @@ FROM api.poll p
          LEFT JOIN upvotes_count uc ON p.id = uc.poll_id
          LEFT JOIN downvotes_count dc ON p.id = dc.poll_id;
 
-GRANT SELECT ON TABLE api.polls_list TO web_anon;
-GRANT SELECT ON TABLE api.polls_list TO web_user;
+GRANT SELECT ON TABLE api.poll_details TO web_anon;
+GRANT SELECT ON TABLE api.poll_details TO web_user;
