@@ -84,7 +84,10 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 onPrevAction={goPrev}
                 onNextAction={goNext}
                 pageSize={limit}
-                onPageSizeSelectAction={setLimit}
+                onPageSizeSelectAction={(n) => {
+                    setLimit(n)
+                    setOffset(0)
+                }}
             />
             {/* TOPICS*/}
             <section className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
@@ -107,7 +110,10 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 onPrevAction={goPrev}
                 onNextAction={goNext}
                 pageSize={limit}
-                onPageSizeSelectAction={setLimit}
+                onPageSizeSelectAction={(n) => {
+                    setLimit(n)
+                    setOffset(0)
+                }}
             />
         </>
     );
