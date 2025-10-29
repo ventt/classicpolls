@@ -30,11 +30,9 @@ export default function PaginationBar({
                     value={String(pageSize)}
                     onChange={(v) => onPageSizeSelectAction(Number(v))}
                     options={[
-                        {label: "3 / page", value: "3"},
-                        {label: "6 / page", value: "6"},
-                        {label: "12 / page", value: "12"},
-                        {label: "24 / page", value: "24"},
-                        {label: "48 / page", value: "48"},
+                        {label: "20 / page", value: "20"},
+                        {label: "40 / page", value: "40"},
+                        {label: "100 / page", value: "100"},
                     ]}
                 />
                 <div className="flex gap-2">

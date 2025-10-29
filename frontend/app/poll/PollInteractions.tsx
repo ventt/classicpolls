@@ -19,23 +19,6 @@ export default function PollInteractions({poll_details, votes, session}: { poll_
         [detailsState]
     );
 
-    // async function vote(value: 1 | -1) {
-    //     if (!loggedIn) return; // Biztonsági guard
-    //     setSending(value);
-    //     try {
-    //         const res = await fetch("/api/votes", {
-    //             method: "POST",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify({ topicId, value }),
-    //         });
-    //         if (res.ok) {
-    //             await loadAll();
-    //         }
-    //     } finally {
-    //         setSending(null);
-    //     }
-    // }
-
     return (
         <div className="mt-5 space-y-5">
             {/* progress + action */}

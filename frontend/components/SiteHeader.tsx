@@ -6,7 +6,7 @@ export default async function SiteHeader() {
     const session = await getServerAuth();
 
     return (
-        <header className="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <header className="flex items-center justify-between border-b border-zinc-800 pb-3 text-white">
             <h1 className="text-5xl font-extrabold tracking-wide">
                 <Link
                     href="/"
