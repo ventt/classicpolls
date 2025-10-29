@@ -1,10 +1,21 @@
 import SiteHeader from "@/components/SiteHeader";
 import AdLayout from "@/app/ad-layout";
 import {fetchCategories} from "@/lib/postgrest/category";
+import {postgrest} from "@/lib/postgrest";
+import {PollDetails} from "@/lib/model/poll-details";
+import PollCard from "@/components/PollCard";
+import {getServerSession} from "next-auth";
 
 
 export default async function Page() {
     const categories = await fetchCategories();
+    const session = await getServerSession();
+    const polls = (await postgrest()
+            .from('poll_details')
+            .select('*')
+            .limit(50)
+            .order("approval_score", {ascending: false})
+    ).data as PollDetails[];
 
     return (
         <AdLayout>
@@ -71,17 +82,16 @@ export default async function Page() {
                 {/* TOPICS*/}
                 <section className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
                     <ul className="grid gap-3">
-                        {/*{topics.map((t) => (*/}
-                        {/*    <TopicCard*/}
-                        {/*        key={t.id}*/}
-                        {/*        topic={t}*/}
-                        {/*        onVote={handleVote}*/}
-                        {/*        loggedIn={!!session}*/}
-                        {/*    />*/}
-                        {/*))}*/}
-                        {/*{!loading && topics.length === 0 && (*/}
-                        {/*    <li className="text-zinc-400 text-sm">No topics found.</li>*/}
-                        {/*)}*/}
+                        {polls.map((t) => (
+                            <PollCard
+                                key={t.id}
+                                pollDetails={t}
+                                loggedIn={!!session}
+                            />
+                        ))}
+                        {polls.length && (
+                            <li className="text-zinc-400 text-sm">No topics found.</li>
+                        )}
                     </ul>
                 </section>
                 {/* PAGINATION (bottom) */}
