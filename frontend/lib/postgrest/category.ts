@@ -1,0 +1,12 @@
+import {postgrest} from "@/lib/postgrest";
+import {CategoryTable} from "@/lib/model/category";
+
+export const fetchCategories = async (): Promise<String[]> => {
+    const response = (await postgrest()
+        .from('category')
+        .select()).data as CategoryTable[]
+
+
+    // Convert to string array
+    return response.map(cat => cat.name);
+}

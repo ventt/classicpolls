@@ -45,7 +45,7 @@ export default function TopicCard({
         <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`}>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                    <Link href={`/topic/${id}`} className="block hover:underline decoration-emerald-400/60">
+                    <Link href={`/poll/${id}`} className="block hover:underline decoration-emerald-400/60">
                         <h3 className="font-semibold text-lg text-white truncate">{title}</h3>
                     </Link>
                     <p className="text-sm text-zinc-400">{category?.name}</p>

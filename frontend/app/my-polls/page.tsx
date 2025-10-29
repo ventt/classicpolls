@@ -88,7 +88,7 @@ export default function MyTopicsPage() {
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
                                         <Link
-                                            href={`/topic/${t.id}`}
+                                            href={`/poll/${t.id}`}
                                             className="font-semibold text-lg text-white hover:underline"
                                         >
                                             {t.title}

@@ -1,11 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import {signIn, signOut, useSession} from "next-auth/react";
+import { getServerAuth } from "@/lib/auth";
+import { SignInButton, SignOutButton } from "@/components/AuthClientButtons";
 
-export default function SiteHeader() {
-    const {data: session, status} = useSession();
-    const isLoadingSession = status === "loading";
+export default async function SiteHeader() {
+    const session = await getServerAuth();
 
     return (
         <header className="flex items-center justify-between border-b border-zinc-800 pb-3">
@@ -38,9 +36,7 @@ export default function SiteHeader() {
                 </Link>
             </h1>
 
-            {isLoadingSession ? (
-                <div className="text-zinc-400">Loading...</div>
-            ) : session ? (
+            {session ? (
                 <div className="flex items-center gap-3">
                     {session.user?.image ? (
                         <img src={session.user.image} alt="avatar" className="w-8 h-8 rounded-full"/>
@@ -48,30 +44,20 @@ export default function SiteHeader() {
                         <div className="w-8 h-8 rounded-full bg-zinc-700"/>
                     )}
                     <span className="font-medium">{session.user?.name}</span>
-                    <Link href="/new-topic"
+                    <Link href="/new-poll"
                           className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition">
                         New Topic
                     </Link>
                     <Link
-                        href="/my-topics"
+                        href="/my-polls"
                         className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
                     >
                         My Topics
                     </Link>
-                    <button
-                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
-                        onClick={() => signOut()}
-                    >
-                        Logout
-                    </button>
+                    <SignOutButton />
                 </div>
             ) : (
-                <button
-                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
-                    onClick={() => signIn("discord")}
-                >
-                    Sign in with Discord
-                </button>
+                <SignInButton />
             )}
         </header>
     );

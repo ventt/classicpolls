@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 type Option = { label: string; value: string };
 
@@ -40,6 +40,7 @@ export default function FancySelect({
                 setOpen(false);
             }
         }
+
         document.addEventListener("mousedown", onDocClick);
         return () => document.removeEventListener("mousedown", onDocClick);
     }, [open]);

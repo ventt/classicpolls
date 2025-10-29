@@ -18,3 +18,15 @@ Accept: application/json
     })
 %}
 
+
+
+###
+GET http://localhost:3001/category
+Accept: application/json
+
+> {%
+    client.test("Test categories are returned", function () {
+        client.assert(response.body.length > 0, "Expected at least one category, but got " + response.body.length)
+    })
+%}
+

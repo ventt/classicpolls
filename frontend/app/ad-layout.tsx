@@ -1,6 +1,8 @@
+'use server';
+
 import React from "react";
 
-export default function AdLayout({ children }: { children: React.ReactNode }) {
+export default async function AdLayout({children}: { children: React.ReactNode }) {
     return (
         <>
             <div className="min-h-screen grid grid-cols-12 gap-4 p-4">
