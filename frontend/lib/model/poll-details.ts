@@ -1,7 +1,4 @@
-// @ts-ignore
-import {GenericTable} from '@supabase/postgrest-js/src/types'
-
-export interface PollDetails extends GenericTable {
+export interface PollDetails {
     id: string,
     title: string,
     description?: string,

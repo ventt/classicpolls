@@ -2,14 +2,24 @@
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
 import {PollDetails} from "@/lib/model/poll-details";
+import {useMemo, useState} from "react";
 
 export default function PollCard({pollDetails, loggedIn}: {
     pollDetails: PollDetails;
     loggedIn: boolean;
 }) {
-    const total = pollDetails.total_votes;
-    const ratio = pollDetails.upvotes / total;
-    const votePercentage = total ? Math.round((ratio) * 100) : 0;
+    const [detailsState, setDetailsState] = useState<PollDetails>(pollDetails);
+    const [loading, setLoading] = useState(true);
+    const [sending, setSending] = useState<null | 1 | -1>(null);
+
+    const ratio = useMemo(
+        () => (pollDetails.upvotes / detailsState.total_votes), [detailsState]
+    );
+    const votePercentage = useMemo(
+        () => (detailsState.total_votes ? Math.round((detailsState.upvotes / detailsState.total_votes) * 100) : 0),
+        [detailsState]
+    );
+
     let borderClass
     let cardBg
 

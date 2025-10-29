@@ -1,6 +1,7 @@
 ### Test without Auth
 GET http://localhost:3001/poll_details?limit=6&order=approval_score.desc
 Accept: application/json
+Prefer: count=exact
 Content-Type: application/json
 
 ### Fetch single test without Auth
