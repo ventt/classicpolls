@@ -3,7 +3,7 @@
 --changeset andras:add-users-table
 CREATE TABLE api.users
 (
-    sub        VARCHAR(32) PRIMARY KEY,
+    sub        BIGINT PRIMARY KEY,
     name       VARCHAR(32)                                        NOT NULL,
     image      VARCHAR(2083)                                      NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE api.category
 CREATE TABLE api.poll
 (
     id            uuid PRIMARY KEY                                         DEFAULT uuid_generate_v4(),
-    user_sub      VARCHAR(32) REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
+    user_sub      BIGINT REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
     title         VARCHAR(75)                                                                        NOT NULL,
     description   TEXT,
     created_at    TIMESTAMP WITH TIME ZONE                                 DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE api.poll
 --changeset andras:add-vote-table
 CREATE TABLE api.vote
 (
-    user_sub   VARCHAR(32) REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
+    user_sub   BIGINT REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
     poll_id    UUID REFERENCES api.poll (id) ON DELETE CASCADE          DEFAULT uuid_generate_v4(),
     choice     BOOLEAN                                                                            NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE                                 DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE api.vote
 --changeset andras:add-poll-report-table
 CREATE TABLE api.poll_report
 (
-    user_sub   VARCHAR(32) REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
+    user_sub   BIGINT REFERENCES api.users (sub) ON DELETE CASCADE DEFAULT jwt_sub(),
     poll_id    UUID REFERENCES api.poll (id) ON DELETE CASCADE,
     reason     VARCHAR(255)                                                                       NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE                                 DEFAULT CURRENT_TIMESTAMP NOT NULL,
