@@ -3,15 +3,50 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import FancySelect from "@/components/FancySelect";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-type Category = { id: string; name: string };
+
 const TITLE_LIMIT = 75;
+const MIN_DESCRIPTION_LENGTH = 30;
 
-export default function NewTopicForm({category}: { category: string }) {
+export default function NewPollForm({categories}: {
+    categories: string[]
+}) {
     const router = useRouter();
+
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [categoryId, setCategoryId] = useState<string>(category);
+    const [markDownDescription, setMarkDownDescription] = useState(`
+# GFM
+
+## Autolink literals
+
+www.example.com, https://example.com, and contact@example.com.
+
+## Footnote
+
+A note[^1]
+
+[^1]: Big note.
+
+## Strikethrough
+
+~one~ or ~~two~~ tildes.
+
+## Table
+
+| a | b  |  c |  d  |
+| - | :- | -: | :-: |
+| 1 | 2  |  3 |  4  |
+| 5 | 6  |  7 |  8  |
+| 9 | 10 | 11 | 12  |
+
+## Tasklist
+
+* [ ] to do
+* [x] done
+    `);
+    const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
@@ -26,27 +61,13 @@ export default function NewTopicForm({category}: { category: string }) {
             setErr(`Title must be ${TITLE_LIMIT} characters or fewer.`);
             return;
         }
-        if (!categoryId) {
-            setErr("Please select a category!");
+        if (markDownDescription.length < MIN_DESCRIPTION_LENGTH) {
+            setErr(`Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`);
             return;
         }
-
-        setLoading(true);
-        try {
-            const res = await fetch("/api/topics", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, description, categoryId }),
-            });
-            const j = await res.json().catch(() => null);
-            if (!res.ok) {
-                setErr(j?.error ?? `${res.status} ${res.statusText}`);
-                return;
-            }
-            router.push("/");
-            router.refresh();
-        } finally {
-            setLoading(false);
+        if (!selectedCategoryName.length) {
+            setErr("Please select a category!");
+            return;
         }
     };
 
@@ -70,33 +91,43 @@ export default function NewTopicForm({category}: { category: string }) {
             />
 
             <label className="text-sm font-medium text-zinc-300">
-                Description <span className="opacity-60">(optional)</span>
+                Description
             </label>
             <textarea
                 className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 min-h-[100px]"
                 placeholder="Brief description..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={markDownDescription}
+                onChange={(e) => setMarkDownDescription(e.target.value)}
             />
+
+            <label className="text-sm font-medium text-zinc-300">
+                Preview
+            </label>
+            <article className="prose md:prose-lg lg:prose-xl text-white">
+                <Markdown remarkPlugins={[remarkGfm]}>{markDownDescription}</Markdown>
+            </article>
 
             <label className="text-sm font-medium text-zinc-300">Category</label>
             <FancySelect
                 ariaLabel="Select category"
-                value={categoryId}
-                onChangeAction={(val: string) => setCategoryId(val)}
-                options={[]} //
+                value={selectedCategoryName}
+                onChangeAction={(val: string) => setSelectedCategoryName(val)}
+                options={[
+                    {label: "Select category", value: ''},
+                    ...categories.map((c: string) => ({label: c, value: c})),
+                ]}
             />
 
             <div className="flex gap-2 mt-2">
                 <button
-                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60"
+                    className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 transition text-white cursor-pointer"
                     onClick={submit}
                     disabled={loading}
                 >
                     {loading ? "Saving..." : "Create"}
                 </button>
                 <button
-                    className="px-4 py-2 rounded-lg border border-zinc-700 hover:bg-zinc-800"
+                    className="px-4 py-2 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition text-white cursor-pointer"
                     onClick={() => history.back()}
                     type="button"
                 >
