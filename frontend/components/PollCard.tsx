@@ -15,6 +15,7 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
     const [voteInProgress, setVoteInProgress] = useState<boolean>(false);
 
+    const [showConfirm, setShowConfirm] = useState(false);
     const ratio = useMemo(
         () => (pollDetails.upvotes / pollDetails.total_votes), [pollDetails]
     );
@@ -120,14 +121,48 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
                     )}
                     {isUsersList && (
                         <button
-                            aria-label="Downvote"
-                            className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 transition-all cursor-pointer "
-                            onClick={() => onDeleteAction(pollDetails.id)}
+                            aria-label="Delete Poll"
+                            className="p-0.5 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 text-white transition-all cursor-pointer "
+                            onClick={() => setShowConfirm(true)}
                             title="Delete"
                         >
+
                             Delete
                         </button>
                     )}
+                    {showConfirm && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                            <div className="bg-gray-900 text-white p-6 rounded-lg shadow-xl w-80">
+                                <h2 className="text-lg font-semibold mb-2">Confirm Delete</h2>
+                                <p className="text-sm mb-1">
+                                    Are you sure you want to permanently delete this?
+                                </p>
+                                <p className="text-sm font-bold text-red-500 mb-5">
+                                    This action cannot be undone.
+                                </p>
+
+                                <div className="flex justify-end gap-3">
+                                    <button
+                                        className="px-3 py-1 rounded-md bg-gray-600 hover:bg-gray-500 transition"
+                                        onClick={() => setShowConfirm(false)}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        className="px-3 py-1 rounded-md bg-red-700 hover:bg-red-600 transition cursor-pointer"
+                                        onClick={() => {
+                                            onDeleteAction(pollDetails.id);
+                                            setShowConfirm(false);
+                                        }}
+                                    >
+                                        Yes, Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
 
