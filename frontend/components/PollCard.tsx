@@ -5,13 +5,13 @@ import {PollDetails} from "@/lib/model/poll-details";
 import {useMemo, useState} from "react";
 import {cn} from "@/lib/utils";
 
-export default function PollCard({pollDetails, loggedIn}: {
+export default function PollCard({pollDetails, loggedIn, isUsersList, onDeleteAction}: {
     pollDetails: PollDetails;
     loggedIn: boolean;
+    isUsersList: boolean;
+    onDeleteAction: (pollId: string) => void;
 }) {
     const [detailsState, setDetailsState] = useState<PollDetails>(pollDetails);
-    const [loading, setLoading] = useState(true);
-    const [sending, setSending] = useState<null | 1 | -1>(null);
 
     const ratio = useMemo(
         () => (pollDetails.upvotes / detailsState.total_votes), [detailsState]
@@ -51,7 +51,7 @@ export default function PollCard({pollDetails, loggedIn}: {
 
                 <div className="flex items-center gap-2 shrink-0">
                     <ShareButton url={shareUrl} title={pollDetails.title}/>
-                    {loggedIn && (
+                    {loggedIn && !isUsersList && (
                         <>
                             <button
                                 aria-label="Upvote"
@@ -74,13 +74,24 @@ export default function PollCard({pollDetails, loggedIn}: {
                                 title="Downvote"
                                 disabled={pollDetails.user_choice === false}
                             >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={cn("text-red-400", {
-                                    "text-white": pollDetails.user_choice === false
-                                })}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                     className={cn("text-red-400", {
+                                         "text-white": pollDetails.user_choice === false
+                                     })}>
                                     <path d="M12 20l7-8h-4V4H9v8H5l7 8z" fill="currentColor"/>
                                 </svg>
                             </button>
                         </>
+                    )}
+                    {isUsersList && (
+                        <button
+                            aria-label="Downvote"
+                            className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 transition cursor-pointer "
+                            onClick={() => onDeleteAction(pollDetails.id)}
+                            title="Delete"
+                        >
+                            Delete
+                        </button>
                     )}
                 </div>
             </div>

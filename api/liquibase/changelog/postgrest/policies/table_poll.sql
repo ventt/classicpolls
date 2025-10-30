@@ -23,6 +23,7 @@ CREATE POLICY user_insert_policy ON api.poll FOR INSERT TO web_user
     WITH CHECK (user_sub = jwt_sub());
 
 --changeset andras:delete-policy-poll-table runOnChange:true
+GRANT DELETE ON TABLE api.poll TO web_user;
 DROP POLICY IF EXISTS owner_delete_policy ON api.poll;
 CREATE POLICY owner_delete_policy ON api.poll FOR DELETE TO web_user
     USING (user_sub = jwt_sub());

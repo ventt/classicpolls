@@ -26,12 +26,13 @@ export default async function Page() {
                         <span className="font-semibold text-zinc-100">
                              Community-powered <span
                             className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want!
-                            <Link href={"/learn-more"} className="hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-emerald-200 hover:via-lime-300 hover:to-emerald-400 text-emerald-400"> Learn more!</Link>
+                            <Link href={"/learn-more"}
+                                  className="hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-emerald-200 hover:via-lime-300 hover:to-emerald-400 text-emerald-400"> Learn more!</Link>
                         </span>
                     </p>
                 </section>
-                <PollList initPollDetailsList={pollDetails.data} loggedIn={!!session} initTotal={pollDetails.count}
-                          initPageSize={initPageSize} categories={categories}/>
+                <PollList initPollDetailsList={pollDetails.data} initTotal={pollDetails.count}
+                          initPageSize={initPageSize} categories={categories} userSub={session?.user.id}/>
             </main>
         </AdLayout>
     );

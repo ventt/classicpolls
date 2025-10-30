@@ -6,6 +6,8 @@ import {PollDetails} from "@/lib/model/poll-details";
 import FancySelect from "@/components/FancySelect";
 import PaginationBar from "@/app/pagination-bar";
 import {fetchPollsDetails} from "@/app/actions";
+import {SessionProvider} from "next-auth/react";
+import {deletePoll} from "@/app/my-polls/my-polls";
 
 enum OrderBy {
     Upvotes = "upvotes",
@@ -24,12 +26,20 @@ const OrderByMap = new Map<string, { orderBy: OrderBy; ascending: boolean }>([
 ]);
 
 
-export default function PollList({initPollDetailsList, loggedIn, initTotal, initPageSize, categories}: {
-    initPollDetailsList: PollDetails[];
-    loggedIn: boolean;
-    initTotal: number;
-    initPageSize: number;
-    categories: string[]
+export default function PollList({
+                                     initPollDetailsList,
+                                     initTotal,
+                                     initPageSize,
+                                     categories,
+                                     isUsersList = false,
+                                     userSub
+                                 }: {
+    initPollDetailsList: PollDetails[],
+    initTotal: number,
+    initPageSize: number,
+    categories: string[],
+    isUsersList?: boolean,
+    userSub?: string
 }) {
     const [polls, setPolls] = useState<PollDetails[]>(initPollDetailsList);
 
@@ -44,14 +54,15 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
     const [searchTerm, setSearchTerm] = useState<string>('');
 
     useEffect(() => {
-        const category = selectedCategoryName == '' ? null : selectedCategoryName;
+        const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
         fetchPollsDetails(
             limit,
             offset,
             orderBy,
             ascending,
             category,
-            searchTerm == '' ? null : searchTerm
+            searchTerm == '' ? undefined : searchTerm,
+            isUsersList ? userSub : undefined,
         ).then(response => {
             setPolls(response.data);
             setTotal(response.count);
@@ -63,6 +74,10 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
 
     const goPrev = () => setOffset((current) => Math.max(0, current - limit));
     const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
+
+    const onDelete = (pollId: string) => {
+        deletePoll(pollId).then(r => setPolls(polls.filter(poll => poll.id !== pollId)))
+    }
 
     return (
         <>
@@ -118,16 +133,20 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
             {/* TOPICS*/}
             <section className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
                 <ul className="grid gap-3">
-                    {polls.map((t) => (
-                        <PollCard
-                            key={t.id}
-                            pollDetails={t}
-                            loggedIn={loggedIn}
-                        />
-                    ))}
-                    {!polls.length && (
-                        <li className="text-zinc-400 text-sm">No topics found.</li>
-                    )}
+                    <SessionProvider>
+                        {polls.map((t) => (
+                            <PollCard
+                                key={t.id}
+                                pollDetails={t}
+                                loggedIn={!!userSub}
+                                isUsersList={isUsersList}
+                                onDeleteAction={onDelete}
+                            />
+                        ))}
+                        {!polls.length && (
+                            <li className="text-zinc-400 text-sm">No polls found.</li>
+                        )}
+                    </SessionProvider>
                 </ul>
             </section>
             <PaginationBar

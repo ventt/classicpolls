@@ -17,12 +17,7 @@ WITH upvotes_count AS (SELECT pv.poll_id,
      user_votes AS (SELECT poll_id, choice
                     FROM api.vote
                     WHERE user_sub = jwt_sub())
-SELECT p.id,
-       p.title,
-       p.description,
-       p.category_name,
-       p.search_vector,
-       p.created_at,
+SELECT p.*,
        uv.choice                                                                 AS user_choice,
        COALESCE(uc.upvotes, 0)                                                   AS upvotes,
        COALESCE(dc.downvotes, 0)                                                 AS downvotes,

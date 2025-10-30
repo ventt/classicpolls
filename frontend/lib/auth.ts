@@ -37,6 +37,11 @@ export const authOptions: NextAuthOptions = {
             if (token.accessToken) {
                 // @ts-ignore
                 session.accessToken = token.accessToken;
+
+            }
+
+            if (token.sub) {
+                session.user.id = token.sub;
             }
 
             return session

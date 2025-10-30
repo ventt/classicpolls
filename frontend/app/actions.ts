@@ -3,12 +3,26 @@ import {extractContentRangeFromResponse} from "@/lib/postgrest";
 import {getServerAuth} from "@/lib/auth";
 
 
-export async function fetchPollsDetails(limit: number, offset: number, orderBy: string, asc: boolean, category?: string | null, searchTerm?: string | null) {
+export async function fetchPollsDetails(limit: number, offset: number, orderBy: string, asc: boolean, category?: string | null, searchTerm?: string | null, user_sub?: string | null) {
     if (limit > 100) {
         throw new Error('maximum limit should be greater than 100');
     }
 
     const url = new URL(process.env.API_URL_POSTGREST + '/poll_details');
+
+    url.searchParams.append('select', [
+        'id',
+        'title',
+        'description',
+        'created_at',
+        'category_name',
+        'user_choice',
+        'upvotes',
+        'downvotes',
+        'total_votes',
+        'upvote_ratio',
+        'approval_score',
+    ].join(','));
     url.searchParams.append('limit', limit.toString());
     url.searchParams.append('offset', offset.toString());
     url.searchParams.append('order', orderBy + '.' + (asc ? 'asc' : 'desc'));
@@ -20,6 +34,11 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
     if (searchTerm) {
         url.searchParams.append('search_vector', 'wfts.' + searchTerm.trim());
     }
+
+    if (user_sub) {
+        url.searchParams.append('user_sub', 'eq.' + user_sub);
+    }
+
 
     const headers = [
         ['Accept', 'application/json'],
@@ -36,9 +55,6 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
     const response = await fetch(url, {
         headers: headers as HeadersInit,
         method: 'GET',
-        next: {
-            revalidate: 5
-        }
     });
 
     const range = extractContentRangeFromResponse(response);
