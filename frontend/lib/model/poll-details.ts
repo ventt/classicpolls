@@ -8,4 +8,5 @@ export interface PollDetails {
     total_votes: number,
     upvote_ratio: number,
     approval_score: number,
+    user_choice: boolean | null,
 }

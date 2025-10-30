@@ -1,5 +1,6 @@
 'use server'
 import {extractContentRangeFromResponse} from "@/lib/postgrest";
+import {getServerAuth} from "@/lib/auth";
 
 
 export async function fetchPollsDetails(limit: number, offset: number, orderBy: string, asc: boolean) {
@@ -12,12 +13,20 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
     url.searchParams.append('offset', offset.toString());
     url.searchParams.append('order', orderBy + '.' + (asc ? 'asc' : 'desc'));
 
+    const headers = [
+        ['Accept', 'application/json'],
+        ['Content-Type', 'application/json'],
+        ['Prefer', 'count=exact']
+    ]
+
+    const accessToken = (await getServerAuth())?.accessToken;
+
+    if (accessToken) {
+        headers.push(['Authorization', `Bearer ${accessToken}`]);
+    }
+
     const response = await fetch(url, {
-        headers: [
-            ['Accept', 'application/json'],
-            ['Content-Type', 'application/json'],
-            ['Prefer', 'count=exact']
-        ],
+        headers: headers as HeadersInit,
         method: 'GET'
     });
 
