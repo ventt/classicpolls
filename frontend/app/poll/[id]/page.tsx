@@ -8,6 +8,7 @@ import AdLayout from "@/app/ad-layout";
 import {fetchPollDetails} from "@/lib/postgrest/poll-details";
 import {fetchVoteDetails} from "@/app/poll/vote-details";
 import {getServerSession} from "next-auth";
+import {headers} from "next/headers";
 
 export default async function PollPage({params}: {params: Promise<{ id: string }>;}){
     const { id } = await params;
@@ -15,7 +16,11 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
     if (!pollDetails) notFound();
     const votes  = await fetchVoteDetails(pollDetails.id, 6);
     const session = await getServerSession()
-    // const shareUrl = `${base}/topic/${data.id}`;
+
+    // Getting share URL
+    const host = (await headers()).get("host");
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    const shareUrl = `${protocol}://${host}/poll/${pollDetails.id}`;
 
     return (
         <AdLayout>
@@ -30,7 +35,7 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                         <p className="text-sm text-zinc-400">{pollDetails.category_name}</p>
                     </div>
                     <div className="flex gap-2">
-                        <ShareButton url="" title={pollDetails.title} />
+                        <ShareButton url={shareUrl} title={pollDetails.title}/>
                         <ReportButton topicId={pollDetails.id}/>
                     </div>
                 </div>
