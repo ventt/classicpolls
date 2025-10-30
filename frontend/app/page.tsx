@@ -4,10 +4,11 @@ import {fetchCategories} from "@/lib/postgrest/category";
 import PollList from "@/components/PollList";
 import {fetchPollsDetails} from "@/app/actions";
 import {getServerAuth} from "@/lib/auth";
+import Link from "next/link";
 
 
 export default async function Page() {
-    const initPageSize = 3
+    const initPageSize = 20
     const categories = await fetchCategories();
     const session = await getServerAuth();
     const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score', false);
@@ -24,7 +25,8 @@ export default async function Page() {
                     <p className="flex flex-wrap items-center gap-2 text-sm leading-relaxed text-center justify-center">
                         <span className="font-semibold text-zinc-100">
                              Community-powered <span
-                            className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want.
+                            className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Classic+</span> vision — where players imagine and shape the World of Warcraft they truly want!
+                            <Link href={"/learn-more"} className="hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-emerald-200 hover:via-lime-300 hover:to-emerald-400 text-emerald-400"> Learn more!</Link>
                         </span>
                     </p>
                 </section>

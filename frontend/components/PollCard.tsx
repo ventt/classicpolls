@@ -54,7 +54,7 @@ export default function PollCard({pollDetails, loggedIn}: {
                         <>
                             <button
                                 aria-label="Upvote"
-                                className="p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 hover:bg-emerald-800/50 active:scale-95 transition"
+                                className="p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 hover:bg-emerald-800/50 active:scale-95 transition cursor-pointer"
                                 onClick={() => alert(pollDetails.title + " true")}
                                 title="Upvote"
                             >
@@ -64,7 +64,7 @@ export default function PollCard({pollDetails, loggedIn}: {
                             </button>
                             <button
                                 aria-label="Downvote"
-                                className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 transition"
+                                className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 transition cursor-pointer"
                                 onClick={() => alert(pollDetails.title + " false")}
                                 title="Downvote"
                             >

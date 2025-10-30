@@ -1,17 +1,17 @@
 'use client';
 
 import {useEffect, useMemo, useRef, useState} from "react";
+import {cn} from "@/lib/utils";
 
-type Option = { label: string; value: string };
+type Option = { label: string; value: string | {} };
 
 export default function FancySelect({
                                         value,
                                         onChange,
                                         options,
                                         placeholder = "Select…",
-                                        className = "",
+                                        className,
                                         ariaLabel,
-                                        widthClass = "w-56",
                                     }: {
     value?: string;
     onChange: (val: string) => void;
@@ -19,7 +19,6 @@ export default function FancySelect({
     placeholder?: string;
     className?: string;
     ariaLabel?: string;
-    widthClass?: string; // pl. "w-56" vagy "w-full"
 }) {
     const [open, setOpen] = useState(false);
     const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -81,14 +80,14 @@ export default function FancySelect({
     }
 
     return (
-        <div className={`relative ${widthClass}`} onKeyDown={onKeyDown}>
+        <div className="relative w-56" onKeyDown={onKeyDown}>
             <button
                 ref={btnRef}
                 type="button"
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-label={ariaLabel}
-                className={`inline-flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className} ${widthClass}`}
+                className={cn("inline-flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer w-56", className)}
                 onClick={() => setOpen((o) => !o)}
             >
         <span className={`truncate ${selected ? "" : "text-zinc-500"}`}>
@@ -123,7 +122,7 @@ export default function FancySelect({
                                     key={opt.value}
                                     role="option"
                                     aria-selected={isSelected}
-                                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between
+                                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between cursor-pointer
                     ${isActive ? "bg-zinc-800" : ""}
                     ${isSelected ? "text-white" : "text-zinc-200"}`}
                                     onMouseEnter={() => setActiveIndex(i)}

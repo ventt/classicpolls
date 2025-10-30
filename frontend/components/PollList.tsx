@@ -6,11 +6,24 @@ import {PollDetails} from "@/lib/model/poll-details";
 import FancySelect from "@/components/FancySelect";
 import PaginationBar from "@/app/pagination-bar";
 import {fetchPollsDetails} from "@/app/actions";
+import {twMerge} from "tailwind-merge";
 
 enum OrderBy {
-    UpvoteRatio = "upvote_ratio",
+    Upvotes = "upvotes",
+    Downvotes = "downvotes",
     ApprovalScore = "approval_score",
+    TotalVotes = "total_votes",
 }
+
+const OrderByMap = new Map<string, { orderBy: OrderBy; ascending: boolean }>([
+    ['most_approved', {orderBy: OrderBy.ApprovalScore, ascending: false}],
+    ['least_approved', {orderBy: OrderBy.ApprovalScore, ascending: true}],
+    ['most_popular', {orderBy: OrderBy.TotalVotes, ascending: false}],
+    ['least_popular', {orderBy: OrderBy.TotalVotes, ascending: true}],
+    ['most_upvotes', {orderBy: OrderBy.Upvotes, ascending: false}],
+    ['most_downvotes', {orderBy: OrderBy.Downvotes, ascending: false}],
+]);
+
 
 export default function PollList({initPollDetailsList, loggedIn, initTotal, initPageSize, categories}: {
     initPollDetailsList: PollDetails[];
@@ -38,6 +51,7 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
     const currentPage = useMemo(() => offset / limit + 1, [offset, limit])
 
     const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
+    const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
 
     const goPrev = () => setOffset((current) => Math.max(0, current - limit));
     const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
@@ -65,16 +79,22 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 <FancySelect
                     ariaLabel="Sort topics"
                     widthClass="w-56"
-                    value=""
-                    onChange={(v) => {
+                    value={selectedOrderBy}
+                    onChange={(val: string) => {
+                        const order = OrderByMap.get(val)
+                        if (order) {
+                            setOrderBy(order.orderBy)
+                            setAscending(order.ascending)
+                            setSelectedOrderBy(val)
+                        }
                     }}
                     options={[
-                        {label: "Most approved ↓ (default)", value: "ratio:desc"},
-                        {label: "Least approved ↑", value: "ratio:asc"},
-                        {label: "Most popular ↓", value: "popularity:desc"},
-                        {label: "Least popular ↑", value: "popularity:asc"},
-                        {label: "Most upvotes ↓", value: "positive:desc"},
-                        {label: "Most downvotes ↓", value: "negative:desc"},
+                        {label: "Most approved ↓ (default)", value: 'most_approved'},
+                        {label: "Least approved ↑", value: 'least_approved'},
+                        {label: "Most popular ↓", value: 'most_popular'},
+                        {label: "Least popular ↑", value: 'least_popular'},
+                        {label: "Most upvotes ↓", value: 'most_upvotes'},
+                        {label: "Most downvotes ↓", value: 'most_downvotes'},
                     ]}
                 />
             </section>

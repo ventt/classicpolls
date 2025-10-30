@@ -37,14 +37,14 @@ export default function PaginationBar({
                 />
                 <div className="flex gap-2">
                     <button
-                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 disabled:opacity-50"
+                        className="px-3 py-1 rounded-lg border border-zinc-700 enabled:hover:bg-zinc-800 disabled:opacity-50 cursor-pointer disabled:cursor-default"
                         onClick={onPrevAction}
                         disabled={currentPage <= 1}
                     >
                         Prev
                     </button>
                     <button
-                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 disabled:opacity-50"
+                        className="px-3 py-1 rounded-lg border border-zinc-700 enabled:hover:bg-zinc-800 disabled:opacity-50 cursor-pointer disabled:cursor-default"
                         onClick={onNextAction}
                         disabled={currentPage >= totalPages}
                     >
