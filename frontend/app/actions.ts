@@ -1,5 +1,5 @@
 'use server'
-import {extractContentRangeFromResponse} from "@/lib/postgrest";
+import {extractContentRangeFromResponse, postgrest} from "@/lib/postgrest";
 import {getServerAuth} from "@/lib/auth";
 
 
@@ -63,4 +63,8 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
         data: await response.json(),
         count: !range ? 0 : range.count,
     };
+}
+
+export async function addPollVote(pollId: string, choice: boolean) {
+    return (await postgrest()).rpc('add_poll_vote', {p_poll_id: pollId, p_choice: choice});
 }

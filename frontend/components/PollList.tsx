@@ -137,7 +137,7 @@ export default function PollList({
                         {polls.map((t) => (
                             <PollCard
                                 key={t.id}
-                                pollDetails={t}
+                                initialPollDetails={t}
                                 loggedIn={!!userSub}
                                 isUsersList={isUsersList}
                                 onDeleteAction={onDelete}

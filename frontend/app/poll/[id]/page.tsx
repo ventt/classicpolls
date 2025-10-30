@@ -1,13 +1,12 @@
-import { headers } from "next/headers";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import {notFound} from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import PollInteractions from "@/app/poll/PollInteractions";
 import SiteHeader from "@/components/SiteHeader";
 import ReportButton from "@/components/ReportButton";
 import AdLayout from "@/app/ad-layout";
 import {fetchPollDetails} from "@/lib/postgrest/poll-details";
-import {fetchVoteDetails, VoteDetails} from "@/app/poll/vote-details";
+import {fetchVoteDetails} from "@/app/poll/vote-details";
 import {getServerSession} from "next-auth";
 
 export default async function PollPage({params}: {params: Promise<{ id: string }>;}){
@@ -40,7 +39,7 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                     <p className="mt-3 text-zinc-200 leading-relaxed">{pollDetails.description}</p>
                 )}
 
-                <PollInteractions poll_details={pollDetails} votes={votes} session={session} />
+                <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
 
                 <div className="mt-6">
                     <Link href="/" className="text-emerald-400 underline">
