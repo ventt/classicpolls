@@ -29,12 +29,6 @@ export default function PollInteractions({initialPollDetails, votes, session}: {
         addPollVote(pollDetails.id, choice).then(r => {
             let modified = {} as PollDetails;
             Object.assign(modified, pollDetails);
-            // TODO
-            // let modifiedRecentVotes = {} as VoteDetails[];
-            // Object.assign(modifiedRecentVotes, recentVotes);
-            // let userVote = recentVotes.filter(v => )
-            // get user name from sub and remove from the list if exists and add to the recent votes,
-            // if recentVotes length exceeds 6 remove the last one
 
             modified.user_choice = choice;
 
@@ -57,6 +51,21 @@ export default function PollInteractions({initialPollDetails, votes, session}: {
             }
 
             setPollDetails(modified);
+
+
+            setRecentVotes([
+                {
+                    user: {
+                        name: session?.user.name as string,
+                        image: session?.user.image as string,
+                    },
+                    choice: choice,
+                    created_at: new Date().toISOString(),
+                },
+                ...recentVotes.filter(v => v.user.name !== session?.user.name)
+            ].slice(0, 6))
+
+
             setVoteInProgress(false);
         });
     }
