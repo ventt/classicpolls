@@ -3,18 +3,18 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
 
-type Option = { label: string; value: string | {} };
+type Option = { label: string; value: string }; // changed: value is now string
 
 export default function FancySelect({
                                         value,
-                                        onChange,
+                                        onChangeAction,
                                         options,
                                         placeholder = "Select…",
                                         className,
                                         ariaLabel,
                                     }: {
     value?: string;
-    onChange: (val: string) => void;
+    onChangeAction: (val: string) => void;
     options: Option[];
     placeholder?: string;
     className?: string;
@@ -72,7 +72,7 @@ export default function FancySelect({
             e.preventDefault();
             const opt = options[activeIndex];
             if (opt) {
-                onChange(opt.value);
+                onChangeAction(opt.value);
                 setOpen(false);
                 btnRef.current?.focus();
             }
@@ -127,7 +127,7 @@ export default function FancySelect({
                     ${isSelected ? "text-white" : "text-zinc-200"}`}
                                     onMouseEnter={() => setActiveIndex(i)}
                                     onClick={() => {
-                                        onChange(opt.value);
+                                        onChangeAction(opt.value);
                                         setOpen(false);
                                         btnRef.current?.focus();
                                     }}

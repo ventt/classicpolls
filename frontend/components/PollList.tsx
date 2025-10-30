@@ -77,7 +77,7 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 <FancySelect
                     ariaLabel="Filter by category"
                     value={selectedCategoryName}
-                    onChange={setSelectedCategoryName}
+                    onChangeAction={setSelectedCategoryName}
                     options={[
                         {label: "All categories", value: ''},
                         ...categories.map((c: string) => ({label: c, value: c})),
@@ -86,7 +86,7 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 <FancySelect
                     ariaLabel="Sort topics"
                     value={selectedOrderBy}
-                    onChange={(val: string) => {
+                    onChangeAction={(val: string) => {
                         const order = OrderByMap.get(val)
                         if (order) {
                             setOrderBy(order.orderBy)

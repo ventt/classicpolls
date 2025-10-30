@@ -27,7 +27,7 @@ export default function PaginationBar({
                 <FancySelect
                     ariaLabel="Page size"
                     value={String(pageSize)}
-                    onChange={(v) => onPageSizeSelectAction(Number(v))}
+                    onChangeAction={(v) => onPageSizeSelectAction(Number(v))}
                     options={[
                         {label: "20 / page", value: "20"},
                         {label: "40 / page", value: "40"},

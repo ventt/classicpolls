@@ -83,7 +83,7 @@ export default function NewTopicForm({category}: { category: string }) {
             <FancySelect
                 ariaLabel="Select category"
                 value={categoryId}
-                onChange={(val: string) => setCategoryId(val)}
+                onChangeAction={(val: string) => setCategoryId(val)}
                 options={[]} //
             />
 
