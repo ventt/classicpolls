@@ -45,7 +45,7 @@ export default async function SiteHeader() {
                     )}
                     <span className="font-medium">{session.user?.name}</span>
                     <Link href="/new-poll"
-                          className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition">
+                          className="px-3 py-1 rounded-lg bg-emerald-800 hover:bg-emerald-600 transition">
                         New Poll
                     </Link>
                     <Link
