@@ -84,7 +84,7 @@ export default function PollList({
 
             <section className="flex flex-wrap gap-2 items-center">
                 <input
-                    className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500"
+                    className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={event => setSearchTerm(event.target.value)}
