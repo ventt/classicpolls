@@ -1,11 +1,12 @@
 'use client';
 
-import { signIn, signOut } from 'next-auth/react';
+import {signIn, signOut} from 'next-auth/react';
+import {cn} from "@/lib/utils";
 
-export function SignInButton() {
+export function SignInButton({design = ''}) {
   return (
     <button
-      className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition cursor-pointer"
+        className={cn("px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition cursor-pointer text-white", design)}
       onClick={() => signIn('discord')}
     >
       Sign in with Discord
