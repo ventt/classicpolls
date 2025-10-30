@@ -6,7 +6,6 @@ import {PollDetails} from "@/lib/model/poll-details";
 import FancySelect from "@/components/FancySelect";
 import PaginationBar from "@/app/pagination-bar";
 import {fetchPollsDetails} from "@/app/actions";
-import {twMerge} from "tailwind-merge";
 
 enum OrderBy {
     Upvotes = "upvotes",
@@ -40,18 +39,27 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
     const [orderBy, setOrderBy] = useState<OrderBy>(OrderBy.ApprovalScore);
     const [ascending, setAscending] = useState(false);
 
+    const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
+    const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
     useEffect(() => {
-        fetchPollsDetails(limit, offset, orderBy, ascending).then(response => {
+        const category = selectedCategoryName == '' ? null : selectedCategoryName;
+        fetchPollsDetails(
+            limit,
+            offset,
+            orderBy,
+            ascending,
+            category,
+            searchTerm == '' ? null : searchTerm
+        ).then(response => {
             setPolls(response.data);
             setTotal(response.count);
         })
-    }, [limit, offset, orderBy, ascending]);
+    }, [limit, offset, orderBy, ascending, selectedCategoryName, searchTerm]);
 
     const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit])
     const currentPage = useMemo(() => offset / limit + 1, [offset, limit])
-
-    const [selectedCategoryName, setSelectedCategoryName] = useState<string>();
-    const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
 
     const goPrev = () => setOffset((current) => Math.max(0, current - limit));
     const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
@@ -63,22 +71,20 @@ export default function PollList({initPollDetailsList, loggedIn, initTotal, init
                 <input
                     className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500"
                     placeholder="Search..."
-                    value=""
-                    readOnly={true}
+                    value={searchTerm}
+                    onChange={event => setSearchTerm(event.target.value)}
                 />
                 <FancySelect
                     ariaLabel="Filter by category"
-                    widthClass="w-56"
-                    value={selectedCategoryName || ""}
-                    onChange={(val) => setSelectedCategoryName(val || undefined)}
+                    value={selectedCategoryName}
+                    onChange={setSelectedCategoryName}
                     options={[
-                        {label: "All categories", value: ""},
+                        {label: "All categories", value: ''},
                         ...categories.map((c: string) => ({label: c, value: c})),
                     ]}
                 />
                 <FancySelect
                     ariaLabel="Sort topics"
-                    widthClass="w-56"
                     value={selectedOrderBy}
                     onChange={(val: string) => {
                         const order = OrderByMap.get(val)

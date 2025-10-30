@@ -37,7 +37,10 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      liquibase:
+        condition: service_completed_successfully
   swagger-ui:
     image: swaggerapi/swagger-ui
     restart: unless-stopped
