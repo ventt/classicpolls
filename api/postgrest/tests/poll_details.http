@@ -4,6 +4,13 @@ Accept: application/json
 Prefer: count=exact
 Content-Type: application/json
 
+### Test with Auth
+GET http://localhost:3001/poll_details?limit=6&order=approval_score.desc
+Authorization: Bearer {{token}}
+Accept: application/json
+Prefer: count=exact
+Content-Type: application/json
+
 ### Fetch single test without Auth
 GET http://localhost:3001/poll_details?id=eq.401a7c03-770e-4487-ae79-188ab8876f27
 Accept: application/vnd.pgrst.object+json
