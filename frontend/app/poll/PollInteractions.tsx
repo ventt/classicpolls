@@ -1,10 +1,11 @@
 "use client";
 
 import {useMemo, useState} from "react";
-import {signIn, useSession} from "next-auth/react";
+import {signIn} from "next-auth/react";
 import {PollDetails} from "@/lib/model/poll-details";
 import {VoteDetails} from "@/app/poll/vote-details";
 import {Session} from "next-auth";
+import {cn} from "@/lib/utils";
 
 export default function PollInteractions({poll_details, votes, session}: { poll_details: PollDetails, votes: VoteDetails[], session: Session | null }) {
     const loggedIn = session && session.user;
@@ -33,24 +34,29 @@ export default function PollInteractions({poll_details, votes, session}: { poll_
                         <div className="flex items-center gap-2">
                             <button
                                 aria-label="Upvote"
-                                disabled={sending !== null}
+                                disabled={detailsState.user_choice === true}
                                 onClick={() => prompt("upvote")}
-                                className="p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 hover:bg-emerald-800/50 active:scale-95 transition disabled:opacity-50"
+                                className="p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 enabled:hover:bg-emerald-800/50 enabled:active:scale-95 transition enabled:cursor-pointer disabled:bg-emerald-400 disabled:border-emerald-300"
                                 title="Upvote"
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                     className="text-emerald-400">
+                                     className={cn("text-emerald-400", {
+                                         "text-white": detailsState.user_choice === true
+                                     })}>
                                     <path d="M12 4l-7 8h4v8h6v-8h4l-7-8z" fill="currentColor"/>
                                 </svg>
                             </button>
                             <button
                                 aria-label="Downvote"
-                                disabled={sending !== null}
+                                disabled={detailsState.user_choice === false}
                                 onClick={() => prompt("downvote")}
-                                className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 transition disabled:opacity-50"
+                                className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 enabled:hover:bg-red-800/50 enabled:active:scale-95 transition enabled:cursor-pointer disabled:bg-red-500"
                                 title="Downvote"
                             >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-red-400">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                     className={cn("text-red-400", {
+                                         "text-white": detailsState.user_choice === false
+                                     })}>
                                     <path d="M12 20l7-8h-4V4H9v8H5l7 8z" fill="currentColor"/>
                                 </svg>
                             </button>

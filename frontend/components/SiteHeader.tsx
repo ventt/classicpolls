@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { getServerAuth } from "@/lib/auth";
-import { SignInButton, SignOutButton } from "@/components/AuthClientButtons";
+import {getServerAuth} from "@/lib/auth";
+import {SignInButton, SignOutButton} from "@/components/AuthClientButtons";
 
 export default async function SiteHeader() {
     const session = await getServerAuth();
@@ -46,13 +46,13 @@ export default async function SiteHeader() {
                     <span className="font-medium">{session.user?.name}</span>
                     <Link href="/new-poll"
                           className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition">
-                        New Topic
+                        New Poll
                     </Link>
                     <Link
                         href="/my-polls"
                         className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition"
                     >
-                        My Topics
+                        My Polls
                     </Link>
                     <SignOutButton />
                 </div>

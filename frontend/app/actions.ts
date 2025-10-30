@@ -18,7 +18,7 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
     }
 
     if (searchTerm) {
-        url.searchParams.append('search_vector', 'wfts.' + searchTerm);
+        url.searchParams.append('search_vector', 'wfts.' + searchTerm.trim());
     }
 
     const headers = [

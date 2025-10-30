@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 import FancySelect from "@/components/FancySelect";
 
 type Category = { id: string; name: string };
 const TITLE_LIMIT = 75;
 
-export default function NewTopicForm({ categories }: { categories: Category[] }) {
+export default function NewTopicForm({category}: { category: string }) {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [categoryId, setCategoryId] = useState<string>(categories?.[0]?.id ?? ""); // ← default első kategória
+    const [categoryId, setCategoryId] = useState<string>(category);
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
@@ -53,8 +53,6 @@ export default function NewTopicForm({ categories }: { categories: Category[] })
     return (
         <div className="flex flex-col gap-3">
             {err && <div className="text-red-400 text-sm">{err}</div>}
-
-            {/* Title + counter (ahogy már csináltuk) */}
             <label className="text-sm font-medium text-zinc-300 flex justify-between items-center">
                 <span>Title</span>
                 <span className={`text-xs ${title.length > TITLE_LIMIT ? "text-red-400" : "text-zinc-500"}`}>
@@ -84,10 +82,9 @@ export default function NewTopicForm({ categories }: { categories: Category[] })
             <label className="text-sm font-medium text-zinc-300">Category</label>
             <FancySelect
                 ariaLabel="Select category"
-                widthClass="w-56"
                 value={categoryId}
-                onChange={(val: string) => setCategoryId(val)} // ← mindig stringet állíts
-                options={categories.map((c) => ({ label: c.name, value: c.id }))} // ← nincs "All categories"
+                onChange={(val: string) => setCategoryId(val)}
+                options={[]} //
             />
 
             <div className="flex gap-2 mt-2">

@@ -26,7 +26,6 @@ export default function PaginationBar({
             <div className="flex items-center gap-3">
                 <FancySelect
                     ariaLabel="Page size"
-                    widthClass="w-28"
                     value={String(pageSize)}
                     onChange={(v) => onPageSizeSelectAction(Number(v))}
                     options={[

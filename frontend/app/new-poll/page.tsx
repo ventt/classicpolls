@@ -1,17 +1,16 @@
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import Link from "next/link";
-import { getServerAuth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import {getServerAuth} from "@/lib/auth";
 import NewTopicForm from "./NewTopicForm";
 import AdLessLayout from "@/app/adless-layout";
+import {fetchCategories} from "@/lib/postgrest/category";
 
 export default async function NewTopicPage() {
     const session = await getServerAuth();
     if (!session?.user?.id) {
         redirect("/api/auth/signin?callbackUrl=/new-topic");
     }
-
-    const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+    const categories = await fetchCategories();
 
     return (
         <AdLessLayout>
@@ -27,7 +26,7 @@ export default async function NewTopicPage() {
                 </header>
 
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 shadow-sm">
-                    <NewTopicForm categories={categories} />
+                    <NewTopicForm category={categories[0]}/>
                 </div>
             </main>
         </AdLessLayout>
