@@ -5,12 +5,16 @@ import PollList from "@/components/PollList";
 import {fetchCategories} from "@/lib/postgrest/category";
 import {getServerAuth} from "@/lib/auth";
 import {fetchPollsDetails} from "@/app/actions";
+import {redirect} from "next/navigation";
 
 
 export default async function MyPollsPage() {
+    const session = await getServerAuth();
+    if (!session?.user?.id) {
+        redirect("/api/auth/signin?callbackUrl=/my-polls");
+    }
     const initPageSize = 20
     const categories = await fetchCategories();
-    const session = await getServerAuth();
     const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score',
         false, null, null, session?.user.id);
 
