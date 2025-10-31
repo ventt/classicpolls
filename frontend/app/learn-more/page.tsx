@@ -9,7 +9,7 @@ export default async function Page() {
     const session = await getServerAuth();
     return (
         <AdLayout>
-            <main className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-6 p-1">
                 <SiteHeader/>
                 <div className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
                     {/* Intro */}
