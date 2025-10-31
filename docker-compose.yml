@@ -64,7 +64,7 @@ services:
 
   cf-tunnel:
     image: cloudflare/cloudflared:latest
-    entrypoint: "tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}"
+    command: "tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}"
     restart: unless-stopped
 
 volumes:
