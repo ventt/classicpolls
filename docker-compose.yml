@@ -4,10 +4,6 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-postgres}
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
-      start_interval: 1s
-      start_period: 1s
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -46,7 +42,7 @@ services:
       - "3001:3001"
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_started
       liquibase:
         condition: service_completed_successfully
 
