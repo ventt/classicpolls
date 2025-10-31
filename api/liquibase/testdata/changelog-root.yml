@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: testdata/categories.sql
+  - include:
+      file: testdata/users.sql
+  - include:
+      file: testdata/polls.sql
+  - include:
+      file: testdata/votes.sql

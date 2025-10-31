@@ -30,7 +30,7 @@ export default function ShareButton({url, title, className = "", size = 18,}: {
     return (
         <button
             onClick={onShare}
-            className={`relative inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800/60 active:scale-95 transition ${className}`}
+            className={`relative inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800/60 active:scale-95 transition cursor-pointer ${className}`}
             title={copied ? "Copied!" : "Share"}
             aria-label="Share topic"
         >

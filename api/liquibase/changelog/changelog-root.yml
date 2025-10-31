@@ -1,0 +1,20 @@
+databaseChangeLog:
+  # Create the API schema
+  - changeSet:
+      id: create-api-schema
+      author: andras
+      changes:
+        - sql:
+            sql: CREATE SCHEMA api;
+  - includeAll:
+      path: changelog/extensions
+  - includeAll:
+      path: changelog/functions
+  - includeAll:
+      path: changelog/tables
+  - includeAll:
+      path: changelog/triggers
+
+  # Add postgrest changelog
+  - include:
+      file: changelog/postgrest/changelog-postgrest.yml

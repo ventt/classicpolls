@@ -1,0 +1,35 @@
+### Test without Auth
+GET http://localhost:3001/poll_details?limit=6&order=approval_score.desc
+Accept: application/json
+Prefer: count=exact
+Content-Type: application/json
+
+### Test with Auth
+GET http://localhost:3001/poll_details?limit=6&order=approval_score.desc
+Authorization: Bearer {{token}}
+Accept: application/json
+Prefer: count=exact
+Content-Type: application/json
+
+### Fetch single test without Auth
+GET http://localhost:3001/poll_details?id=eq.401a7c03-770e-4487-ae79-188ab8876f27
+Accept: application/vnd.pgrst.object+json
+Content-Type: application/json
+
+### Test with Auth
+POST http://localhost:3001/poll
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Test Poll",
+  "description": "ASDdsdasdsad <script>alert('XSS')</script>",
+  "category_name": "PvP"
+}
+
+> {%
+    client.test("Test authorized poll creation is successful", function () {
+        client.assert(response.status === 201, "Expected status 201 Created, but got " + response.status)
+    })
+%}

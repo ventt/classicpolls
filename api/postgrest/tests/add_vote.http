@@ -1,0 +1,16 @@
+### Test with Auth
+POST http://localhost:3001/rpc/add_poll_vote
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "p_poll_id": "401a7c03-770e-4487-ae79-188ab8876f27",
+  "p_choice": false
+}
+
+> {%
+    client.test("Test authorized poll creation is successful", function () {
+        client.assert(response.status === 204, "Expected status 204 No Content, but got " + response.status)
+    })
+%}

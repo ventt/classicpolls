@@ -1,11 +1,15 @@
+'use server';
+
 import Link from "next/link";
 
-export default function NotFound() {
+export default async function NotFound() {
     return (
         <div className="min-h-[70vh] flex items-center justify-center p-6">
-            <div className="w-full max-w-xl rounded-2xl border border-zinc-800 bg-zinc-950/60 backdrop-blur-sm p-8 text-center shadow-[0_0_0_1px_rgba(16,185,129,0.06)_inset,0_20px_60px_rgba(16,185,129,0.04)]">
+            <div
+                className="w-full max-w-xl rounded-2xl border border-zinc-800 bg-zinc-950/60 backdrop-blur-sm p-8 text-center shadow-[0_0_0_1px_rgba(16,185,129,0.06)_inset,0_20px_60px_rgba(16,185,129,0.04)]">
                 <h1 className="text-3xl font-extrabold text-white">
-                    404 — <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Not&nbsp;Found</span>
+                    404 — <span
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-lime-300 to-emerald-400">Not&nbsp;Found</span>
                 </h1>
 
                 <p className="mt-3 text-zinc-300">

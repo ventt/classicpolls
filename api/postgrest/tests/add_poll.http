@@ -1,0 +1,53 @@
+### Test with Authorization
+POST http://localhost:3001/poll
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Test Poll",
+  "description": "ASDdsdasdsad <script>alert('XSS')</script>",
+  "category_name": "PvP"
+}
+
+> {%
+    client.test("Test unauthorized poll creation is rejected", function () {
+        client.assert(response.status === 401, "Expected status 401 Unauthorized, but got " + response.status)
+    })
+%}
+
+
+### Test with Auth
+POST http://localhost:3001/poll
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Test Poll",
+  "description": "ASDdsdasdsad <script>alert('XSS')</script>",
+  "category_name": "PvP"
+}
+
+> {%
+    client.test("Test authorized poll creation is successful", function () {
+        client.assert(response.status === 201, "Expected status 201 Created, but got " + response.status)
+    })
+%}
+
+### Test with invalid category
+POST http://localhost:3001/poll
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Test Poll",
+  "description": "ASDdsdasdsad <script>alert('XSS')</script>",
+  "category_name": "sdfsfsdf"
+}
+
+> {%
+    client.test("Test poll creation with invalid category is rejected", function () {
+        client.assert(response.status === 409, "Expected status 409 Conflict, but got " + response.status)
+    })
+%}

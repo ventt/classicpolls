@@ -1,0 +1,5 @@
+### Test with Authorization
+DELETE http://localhost:3001/poll?id=eq.401a7c03-770e-4487-ae79-188ab8876f27
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
