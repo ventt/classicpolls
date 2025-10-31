@@ -5,9 +5,11 @@ import {useRouter} from "next/navigation";
 import FancySelect from "@/components/FancySelect";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import {createNewPoll} from "@/app/new-poll/actions";
 
 
-const TITLE_LIMIT = 75;
+const TITLE_MAX = 75;
+const TITLE_MIN = 10;
 const MIN_DESCRIPTION_LENGTH = 30;
 
 export default function NewPollForm({categories}: {
@@ -17,48 +19,51 @@ export default function NewPollForm({categories}: {
 
     const [title, setTitle] = useState("");
     const [markDownDescription, setMarkDownDescription] = useState(`
-# GFM
+## 👋 Welcome to the GitHub Markdown Mini-Guide
 
-## Autolink literals
+Hi there! This short guide shows a few basics of GitHub-flavored Markdown.
 
-www.example.com, https://example.com, and contact@example.com.
+### ✨ Basic Formatting
 
-## Footnote
+**Bold text**  
+*Italic text*  
+~~Strikethrough~~
 
-A note[^1]
+### 📋 Lists
 
-[^1]: Big note.
+- Item 1
+- Item 2
+  - Sub-item
 
-## Strikethrough
+1. First
+2. Second
 
-~one~ or ~~two~~ tildes.
+### 🧱 Blockquote Guide
 
-## Table
+Blockquotes are used to highlight notes, tips, or quoted text.
 
-| a | b  |  c |  d  |
-| - | :- | -: | :-: |
-| 1 | 2  |  3 |  4  |
-| 5 | 6  |  7 |  8  |
-| 9 | 10 | 11 | 12  |
+Write a blockquote by starting a line with \`>\`:
 
-## Tasklist
-
-* [ ] to do
-* [x] done
+> This is a blockquote!
     `);
     const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
 
     const submit = async () => {
+
         setErr(null);
 
         if (!title) {
             setErr("Please fill in the title!");
             return;
         }
-        if (title.length > TITLE_LIMIT) {
-            setErr(`Title must be ${TITLE_LIMIT} characters or fewer.`);
+        if (title.length > TITLE_MAX) {
+            setErr(`Title must be ${TITLE_MAX} characters or fewer.`);
+            return;
+        }
+        if (title.length < TITLE_MIN) {
+            setErr(`Title must be at least ${TITLE_MIN} characters.`);
             return;
         }
         if (markDownDescription.length < MIN_DESCRIPTION_LENGTH) {
@@ -69,6 +74,16 @@ A note[^1]
             setErr("Please select a category!");
             return;
         }
+
+        try {
+            setLoading(true);
+            await createNewPoll(title, markDownDescription, selectedCategoryName)
+            alert('Poll created successfully!');
+        } catch (e) {
+            setErr(e instanceof Error ? e.message : 'An error occurred while creating the poll.');
+            setLoading(false);
+            return
+        }
     };
 
     return (
@@ -76,22 +91,25 @@ A note[^1]
             {err && <div className="text-red-400 text-sm">{err}</div>}
             <label className="text-sm font-medium text-zinc-300 flex justify-between items-center">
                 <span>Title</span>
-                <span className={`text-xs ${title.length > TITLE_LIMIT ? "text-red-400" : "text-zinc-500"}`}>
-          {title.length} / {TITLE_LIMIT}
+                <span className={`text-xs ${title.length > TITLE_MAX ? "text-red-400" : "text-zinc-500"}`}>
+          {title.length} / {TITLE_MAX}
         </span>
             </label>
             <input
                 className={`border rounded-lg px-3 py-2 bg-zinc-900 text-zinc-100 border-zinc-800 focus:outline-none focus:ring-1 ${
-                    title.length > TITLE_LIMIT ? "border-red-600 focus:ring-red-600" : "focus:ring-indigo-500"
+                    title.length > TITLE_MAX ? "border-red-600 focus:ring-red-600" : "focus:ring-indigo-500"
                 }`}
                 placeholder="Enter topic title"
                 value={title}
-                maxLength={TITLE_LIMIT + 1}
+                maxLength={TITLE_MAX + 1}
                 onChange={(e) => setTitle(e.target.value)}
             />
 
             <label className="text-sm font-medium text-zinc-300">
-                Description
+                Description (<a target="_blank" rel="noopener noreferrer"
+                                className="text-zinc-500 hover:text-emerald-300"
+                                href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet/7cbbd78fe93a3342f04fdd0e00a6a6ec5627a18e">Markdown
+                cheatsheat</a>)
             </label>
             <textarea
                 className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 max-h-64 h-64"

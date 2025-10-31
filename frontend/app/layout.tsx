@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body className="min-h-screen bg-cover bg-center bg-fixed overflow-hidden"
+        <body className="min-h-screen bg-cover bg-center bg-fixed"
               style={{
                   backgroundImage: "url('/wallpaper.jpg')",
                   backgroundRepeat: "no-repeat",

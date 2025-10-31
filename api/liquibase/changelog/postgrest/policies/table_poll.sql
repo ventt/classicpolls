@@ -20,7 +20,7 @@ CREATE POLICY user_select_policy ON api.poll FOR SELECT TO web_user
 GRANT INSERT (title, category_name, description) ON TABLE api.poll TO web_user;
 DROP POLICY IF EXISTS user_insert_policy ON api.poll;
 CREATE POLICY user_insert_policy ON api.poll FOR INSERT TO web_user
-    WITH CHECK (user_sub = jwt_sub());
+    WITH CHECK (user_sub = jwt_sub() AND LENGTH(description) <= 2000 AND LENGTH(title) >= 10);
 
 --changeset andras:delete-policy-poll-table runOnChange:true
 GRANT DELETE ON TABLE api.poll TO web_user;

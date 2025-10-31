@@ -15,7 +15,7 @@ export default async function Page() {
 
     return (
         <AdLayout>
-            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 overflow-hidden">
                 <SiteHeader/>
                 <section
                     className="relative rounded-xl border border-emerald-600/30
