@@ -45,6 +45,7 @@ export default function PollList({
     userSub?: string
 }) {
     const [polls, setPolls] = useState<PollDetails[]>(initPollDetailsList);
+    const [updatedPolls, setUpdatedPolls] = useState<PollDetails[]>([]);
 
     const [total, setTotal] = useState(initTotal);
     const [limit, setLimit] = useState(initPageSize);
@@ -56,9 +57,9 @@ export default function PollList({
     const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    useEffect(() => {
+    const load = async () => {
         const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
-        fetchPollsDetails(
+        return fetchPollsDetails(
             limit,
             offset,
             orderBy,
@@ -66,11 +67,34 @@ export default function PollList({
             category,
             searchTerm == '' ? undefined : searchTerm,
             isUsersList ? userSub : undefined,
-        ).then(response => {
+        )
+    };
+
+    useEffect(() => {
+        load().then(response => {
+            setUpdatedPolls([]);
             setPolls(response.data);
             setTotal(response.count);
-        })
+        }).catch(() => {
+            if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
+                window.location.reload();
+            }
+        });
     }, [limit, offset, orderBy, ascending, selectedCategoryName, searchTerm]);
+
+    // Refresh every 10s
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            // Make sure no other load is in progress
+            load().then(response => {
+                setUpdatedPolls(response.data);
+            })
+        }, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
 
     const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit])
     const currentPage = useMemo(() => offset / limit + 1, [offset, limit])
@@ -147,6 +171,7 @@ export default function PollList({
                                 loggedIn={!!userSub}
                                 isUsersList={isUsersList}
                                 onDeleteAction={onDelete}
+                                updatedPollDetailsList={updatedPolls}
                             />
                         ))}
                         {!polls.length && (

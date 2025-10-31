@@ -2,15 +2,16 @@
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
 import {PollDetails} from "@/lib/model/poll-details";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {cn} from "@/lib/utils";
 import {addPollVote} from "@/app/actions";
 
-export default function PollCard({initialPollDetails, loggedIn, isUsersList, onDeleteAction}: {
+export default function PollCard({initialPollDetails, loggedIn, isUsersList, onDeleteAction, updatedPollDetailsList}: {
     initialPollDetails: PollDetails;
     loggedIn: boolean;
     isUsersList: boolean;
     onDeleteAction: (pollId: string) => void;
+    updatedPollDetailsList?: PollDetails[]; // Used to refresh poll details periodically
 }) {
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
     const [voteInProgress, setVoteInProgress] = useState<boolean>(false);
@@ -23,6 +24,16 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
         () => (pollDetails.total_votes ? Math.round((pollDetails.upvotes / pollDetails.total_votes) * 100) : 0),
         [pollDetails]
     );
+
+    // Refresh poll details when updatedPollDetailsList changes
+    if (updatedPollDetailsList) {
+        useEffect(() => {
+            const newPollDetails = updatedPollDetailsList.filter(pd => pd.id == pollDetails.id).pop();
+            if (newPollDetails) {
+                setPollDetails(newPollDetails);
+            }
+        }, [updatedPollDetailsList]);
+    }
 
 
     const vote = function (choice: boolean) {
