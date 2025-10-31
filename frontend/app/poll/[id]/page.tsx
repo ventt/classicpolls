@@ -9,6 +9,8 @@ import {fetchPollDetails} from "@/lib/postgrest/poll-details";
 import {fetchVoteDetails} from "@/app/poll/vote-details";
 import {getServerSession} from "next-auth";
 import {headers} from "next/headers";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default async function PollPage({params}: {params: Promise<{ id: string }>;}){
     const { id } = await params;
@@ -39,10 +41,21 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                         <ReportButton topicId={pollDetails.id}/>
                     </div>
                 </div>
+                <div
+                    className="h-64 w-f overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 border  rounded-lg border-zinc-800 p-6">
+                    {pollDetails.description ? (
 
-                {pollDetails.description && (
-                    <p className="mt-3 text-zinc-200 leading-relaxed">{pollDetails.description}</p>
+                        <article
+                            className="prose prose-sm prose-slate prose-invert">
+                            <Markdown remarkPlugins={[remarkGfm]}>{pollDetails.description}</Markdown>
+                        </article>
+
+                    ) : (
+                        <article className="prose prose-sm prose-slate prose-invert">
+                            No Description
+                        </article>
                 )}
+                </div>
 
                 <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
 

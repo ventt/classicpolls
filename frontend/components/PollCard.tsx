@@ -59,16 +59,20 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
 
     let borderClass
     let cardBg
+    let hoverColor
 
     if (ratio < 0.4) {
         borderClass = "border-red-600/70";
         cardBg = "bg-zinc-900/80";
+        hoverColor = "hover:text-red-600/70"
     } else if (ratio < 0.7) {
         borderClass = "border-yellow-600/70";
         cardBg = "bg-zinc-900/70";
+        hoverColor = "hover:text-yellow-600/70"
     } else {
         borderClass = "border-green-600/70";
         cardBg = "bg-emerald-900/20";
+        hoverColor = "hover:text-green-600/70"
     }
 
     const shareUrl = typeof window !== "undefined"
@@ -79,8 +83,8 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
         <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`}>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                    <Link href={`/poll/${pollDetails.id}`} className="block hover:underline decoration-emerald-400/60">
-                        <h3 className="font-semibold text-lg text-white truncate">{pollDetails.title} </h3>
+                    <Link href={`/poll/${pollDetails.id}`} className="block">
+                        <h3 className={`font-semibold text-lg text-white truncate ${hoverColor}`}>{pollDetails.title} </h3>
                     </Link>
                     <p className="text-sm text-zinc-400">{pollDetails.category_name}</p>
                 </div>
@@ -165,15 +169,6 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
 
                 </div>
             </div>
-
-            {pollDetails.description ? (
-                <div className="relative mt-2">
-                    <p className="text-sm text-zinc-300 leading-6 max-h-24 overflow-hidden fade-bottom">
-                        {pollDetails.description}
-                    </p>
-                </div>
-            ) : null
-            }
 
             <div className="mt-3">
                 <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
