@@ -7,6 +7,8 @@ import {VoteDetails} from "@/app/poll/vote-details";
 import {Session} from "next-auth";
 import {cn} from "@/lib/utils";
 import {addPollVote} from "@/app/actions";
+import relativeTime from 'dayjs/plugin/relativeTime'
+import dayjs from "dayjs";
 
 export default function PollInteractions({initialPollDetails, votes, session}: {
     initialPollDetails: PollDetails,
@@ -23,6 +25,9 @@ export default function PollInteractions({initialPollDetails, votes, session}: {
         () => (pollDetails.total_votes ? Math.round((pollDetails.upvotes / pollDetails.total_votes) * 100) : 0),
         [pollDetails]
     );
+
+    // Extend dayjs with relativeTime plugin
+    dayjs.extend(relativeTime);
 
     const vote = function (choice: boolean) {
         setVoteInProgress(true);
@@ -148,7 +153,7 @@ export default function PollInteractions({initialPollDetails, votes, session}: {
                                                 <span className="text-red-400">downvoted</span>}
                                         </div>
                                         <div
-                                            className="text-xs text-zinc-500">{new Date(vote.created_at).toLocaleString()}</div>
+                                            className="text-xs text-zinc-500">{dayjs(vote.created_at).fromNow()}</div>
                                     </div>
                                     <span
                                         className={`text-xs px-2 py-0.5 rounded-md border ${
