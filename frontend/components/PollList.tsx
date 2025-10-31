@@ -14,11 +14,14 @@ enum OrderBy {
     Downvotes = "downvotes",
     ApprovalScore = "approval_score",
     TotalVotes = "total_votes",
+    Recent = "created_at",
 }
 
 const OrderByMap = new Map<string, { orderBy: OrderBy; ascending: boolean }>([
     ['most_approved', {orderBy: OrderBy.ApprovalScore, ascending: false}],
     ['least_approved', {orderBy: OrderBy.ApprovalScore, ascending: true}],
+    ['most_recent', {orderBy: OrderBy.Recent, ascending: false}],
+    ['least_recent', {orderBy: OrderBy.Recent, ascending: true}],
     ['most_popular', {orderBy: OrderBy.TotalVotes, ascending: false}],
     ['least_popular', {orderBy: OrderBy.TotalVotes, ascending: true}],
     ['most_upvotes', {orderBy: OrderBy.Upvotes, ascending: false}],
@@ -99,7 +102,7 @@ export default function PollList({
                     ]}
                 />
                 <FancySelect
-                    ariaLabel="Sort topics"
+                    ariaLabel="Sort polls"
                     value={selectedOrderBy}
                     onChangeAction={(val: string) => {
                         const order = OrderByMap.get(val)
@@ -114,6 +117,8 @@ export default function PollList({
                         {label: "Least approved ↑", value: 'least_approved'},
                         {label: "Most popular ↓", value: 'most_popular'},
                         {label: "Least popular ↑", value: 'least_popular'},
+                        {label: "Most recent ↓", value: 'most_recent'},
+                        {label: "Least recent ↑", value: 'least_recent'},
                         {label: "Most upvotes ↓", value: 'most_upvotes'},
                         {label: "Most downvotes ↓", value: 'most_downvotes'},
                     ]}
@@ -131,7 +136,8 @@ export default function PollList({
                 }}
             />
             {/* TOPICS*/}
-            <section className="max-h-[65vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900">
+            <section
+                className="max-h-[65vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900">
                 <ul className="grid gap-3">
                     <SessionProvider>
                         {polls.map((t) => (
