@@ -26,7 +26,7 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
 
     return (
         <AdLayout>
-            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 p-1">
                 <SiteHeader />
 
                 <div className="flex items-start justify-between gap-4 mt-2">
