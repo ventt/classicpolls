@@ -159,6 +159,7 @@ export default function PollList({
                     setLimit(n)
                     setOffset(0)
                 }}
+                selection={false}
             />
         </>
     );

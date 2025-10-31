@@ -42,7 +42,7 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       tailwind-scrollbar:
-        specifier: ^4.0.2
+        specifier: ^4
         version: 4.0.2(react@19.1.0)(tailwindcss@4.1.16)
     devDependencies:
       '@eslint/eslintrc':

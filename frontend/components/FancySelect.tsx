@@ -135,7 +135,7 @@ export default function FancySelect({
                                 >
                                     <span className="truncate">{opt.label}</span>
                                     {isSelected ? (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" className="text-indigo-400">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" className="text-emerald-800">
                                             <path
                                                 d="M20 6L9 17l-5-5"
                                                 fill="none"

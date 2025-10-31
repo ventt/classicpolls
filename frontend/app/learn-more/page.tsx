@@ -228,7 +228,7 @@ export default async function Page() {
                     </section>
 
                     {/* Footer note */}
-                    <section className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6">
+                    <section className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6 mb-5">
                         <p className="text-xs text-zinc-400 leading-relaxed">
                             This is a community movement and not affiliated with Blizzard Entertainment. World of
                             Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard
