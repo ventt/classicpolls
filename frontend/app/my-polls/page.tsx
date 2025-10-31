@@ -21,7 +21,7 @@ export default async function MyPollsPage() {
 
     return (
         <AdLessLayout>
-            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4">
+            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 p-1">
                 <SiteHeader/>
 
 
@@ -31,7 +31,7 @@ export default async function MyPollsPage() {
                             <h2 className="text-xl font-semibold text-white">My Polls</h2>
                             <Link
                                 href="/new-poll"
-                                className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition text-white"
+                                className="px-3 py-1 rounded-lg bg-emerald-800 hover:bg-emerald-600 transition text-white"
                             >
                                 New Poll
                             </Link>

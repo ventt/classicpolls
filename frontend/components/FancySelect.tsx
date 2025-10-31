@@ -12,6 +12,7 @@ export default function FancySelect({
                                         placeholder = "Select…",
                                         className,
                                         ariaLabel,
+                                        openUp = false,
                                     }: {
     value?: string;
     onChangeAction: (val: string) => void;
@@ -19,6 +20,7 @@ export default function FancySelect({
     placeholder?: string;
     className?: string;
     ariaLabel?: string;
+    openUp?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -109,7 +111,7 @@ export default function FancySelect({
                 <div
                     ref={listRef}
                     role="listbox"
-                    className="absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900"
+                    className={cn("absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900", openUp ? "bottom-full mb2" : "")}
                 >
                     {options.length === 0 ? (
                         <div className="px-3 py-2 text-sm text-zinc-500">No options</div>

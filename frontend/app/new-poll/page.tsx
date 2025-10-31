@@ -19,7 +19,7 @@ export default async function NewTopicPage() {
                     <h1 className="text-2xl font-bold text-white">Create a New Poll</h1>
                     <Link
                         href="/"
-                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition text-zinc-400"
+                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition text-white"
                     >
                         Back
                     </Link>
