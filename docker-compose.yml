@@ -62,6 +62,11 @@ services:
       postgrest:
         condition: service_started
 
+  cf-tunnel:
+    image: cloudflare/cloudflared:latest
+    entrypoint: "tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}"
+    restart: unless-stopped
+
 volumes:
   postgres_data:
 
