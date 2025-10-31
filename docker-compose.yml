@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-postgres}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
       start_interval: 1s
@@ -22,7 +22,7 @@ services:
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-root.yml
       LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/postgres
       LIQUIBASE_COMMAND_USERNAME: postgres
-      LIQUIBASE_COMMAND_PASSWORD: postgres
+      LIQUIBASE_COMMAND_PASSWORD: ${DB_ROOT_PASSWORD:-postgres}
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,7 +32,7 @@ services:
     image: postgrest/postgrest
     restart: unless-stopped
     environment:
-      PGRST_DB_URI: postgres://authenticator:postgrest@postgres:5432/postgres
+      PGRST_DB_URI: postgres://authenticator:${DB_AUTHENTICATOR_PASSWORD:-postgres}@postgres:5432/postgres
       PGRST_DB_SCHEMAS: api
       PGRST_SERVER_PORT: 3001
       PGRST_ADMIN_SERVER_PORT: 3002
