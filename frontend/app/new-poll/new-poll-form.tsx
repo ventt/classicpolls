@@ -94,7 +94,7 @@ A note[^1]
                 Description
             </label>
             <textarea
-                className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 min-h-[100px]"
+                className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 max-h-64 h-64"
                 placeholder="Brief description..."
                 value={markDownDescription}
                 onChange={(e) => setMarkDownDescription(e.target.value)}
@@ -103,9 +103,14 @@ A note[^1]
             <label className="text-sm font-medium text-zinc-300">
                 Preview
             </label>
-            <article className="prose md:prose-lg lg:prose-xl text-white">
-                <Markdown remarkPlugins={[remarkGfm]}>{markDownDescription}</Markdown>
-            </article>
+            <div
+                className="h-64 w-f overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 border  rounded-lg border-zinc-800 p-6 backdrop-blur-sm">
+                <article
+                    className="prose prose-sm prose-slate prose-invert">
+                    <Markdown remarkPlugins={[remarkGfm]}>{markDownDescription}</Markdown>
+                </article>
+            </div>
+
 
             <label className="text-sm font-medium text-zinc-300">Category</label>
             <FancySelect

@@ -11,7 +11,7 @@ export default async function Page() {
         <AdLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-6">
                 <SiteHeader/>
-                <div className="max-h-[90vh] overflow-y-auto pr-1 fancy-scrollbar space-y-6">
+                <div className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
                     {/* Intro */}
                     <section className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6">
                         <h1 className="text-2xl font-semibold text-emerald-200 tracking-tight">Learn more</h1>

@@ -109,7 +109,7 @@ export default function FancySelect({
                 <div
                     ref={listRef}
                     role="listbox"
-                    className="absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full"
+                    className="absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900"
                 >
                     {options.length === 0 ? (
                         <div className="px-3 py-2 text-sm text-zinc-500">No options</div>

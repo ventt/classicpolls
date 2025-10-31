@@ -131,7 +131,7 @@ export default function PollList({
                 }}
             />
             {/* TOPICS*/}
-            <section className="max-h-[65vh] overflow-y-auto pr-1 fancy-scrollbar">
+            <section className="max-h-[65vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900">
                 <ul className="grid gap-3">
                     <SessionProvider>
                         {polls.map((t) => (
