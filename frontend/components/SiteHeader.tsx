@@ -9,7 +9,7 @@ export default async function SiteHeader() {
         <header className="flex items-center justify-between border-b border-zinc-800 pb-3 text-white relative">
             {/* Logo */}
             <h1 className="xl:text-5xl lg:text-3xl text-3xl font-extrabold tracking-wide">
-                <Link
+                <a
                     href="/"
                     aria-label="Go to homepage"
                     className="inline-block relative transition-all duration-300 ease-out
@@ -31,7 +31,7 @@ export default async function SiteHeader() {
                            from-lime-300 via-emerald-300 to-lime-400 transition-all duration-300">
             Polls
           </span>
-                </Link>
+                </a>
             </h1>
 
             {/* Desktop Nav */}
