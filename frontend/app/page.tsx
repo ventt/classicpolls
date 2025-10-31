@@ -1,10 +1,10 @@
 import SiteHeader from "@/components/SiteHeader";
-import AdLayout from "@/app/ad-layout";
 import {fetchCategories} from "@/lib/postgrest/category";
 import PollList from "@/components/PollList";
 import {fetchPollsDetails} from "@/app/actions";
 import {getServerAuth} from "@/lib/auth";
 import Link from "next/link";
+import AdLessLayout from "@/app/adless-layout";
 
 
 export default async function Page() {
@@ -14,7 +14,7 @@ export default async function Page() {
     const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score', false);
 
     return (
-        <AdLayout>
+        <AdLessLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 overflow-hidden p-1">
                 <SiteHeader/>
                 <section
@@ -34,7 +34,7 @@ export default async function Page() {
                 <PollList initPollDetailsList={pollDetails.data} initTotal={pollDetails.count}
                           initPageSize={initPageSize} categories={categories} userSub={session?.user.id}/>
             </main>
-        </AdLayout>
+        </AdLessLayout>
     );
 }
 

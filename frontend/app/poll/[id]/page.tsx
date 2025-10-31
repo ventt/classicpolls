@@ -4,13 +4,13 @@ import ShareButton from "@/components/ShareButton";
 import PollInteractions from "@/app/poll/PollInteractions";
 import SiteHeader from "@/components/SiteHeader";
 import ReportButton from "@/components/ReportButton";
-import AdLayout from "@/app/ad-layout";
 import {fetchPollDetails} from "@/lib/postgrest/poll-details";
 import {fetchVoteDetails} from "@/app/poll/vote-details";
 import {getServerSession} from "next-auth";
 import {headers} from "next/headers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import AdLessLayout from "@/app/adless-layout";
 
 export default async function PollPage({params}: {params: Promise<{ id: string }>;}){
     const { id } = await params;
@@ -25,7 +25,7 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
     const shareUrl = `${protocol}://${host}/poll/${pollDetails.id}`;
 
     return (
-        <AdLayout>
+        <AdLessLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 p-1">
                 <SiteHeader />
 
@@ -65,6 +65,6 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                     </Link>
                 </div>
             </main>
-        </AdLayout>
+        </AdLessLayout>
     );
 }
