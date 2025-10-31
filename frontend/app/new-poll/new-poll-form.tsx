@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import FancySelect from "@/components/FancySelect";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {createNewPoll} from "@/app/new-poll/actions";
+import {createNewPoll, lintPollDescription} from "@/app/new-poll/actions";
 
 
 const TITLE_MAX = 75;
@@ -77,8 +77,23 @@ Write a blockquote by starting a line with \`>\`:
 
         try {
             setLoading(true);
-            await createNewPoll(title, markDownDescription, selectedCategoryName)
-            alert('Poll created successfully!');
+
+            const lintErrors = await lintPollDescription(markDownDescription);
+
+            if (lintErrors.length) {
+                setErr(`Description has the following issues:\n\n${lintErrors.join('\n')}`);
+                setLoading(false);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to create this poll? You CAN NOT edit it later")) {
+                setLoading(false);
+                return;
+            }
+
+            const pollId: string = await createNewPoll(title, markDownDescription, selectedCategoryName);
+
+            router.push(`/poll/${pollId}`);
         } catch (e) {
             setErr(e instanceof Error ? e.message : 'An error occurred while creating the poll.');
             setLoading(false);

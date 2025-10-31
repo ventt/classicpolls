@@ -12,7 +12,6 @@ BEGIN
         RAISE EXCEPTION 'user_sub cannot be changed';
     END IF;
     NEW.title := html_escape(NEW.title);
-    NEW.description := html_escape(NEW.description);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

@@ -6,7 +6,6 @@ CREATE OR REPLACE FUNCTION on_poll_insert()
 $$
 BEGIN
     NEW.title := html_escape(NEW.title);
-    NEW.description := html_escape(NEW.description);
     NEW.search_vector := websearch_to_tsquery(concat_ws(' ', NEW.title, NEW.description));
     RETURN NEW;
 END;
