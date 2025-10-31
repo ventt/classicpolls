@@ -10,7 +10,7 @@ import {createNewPoll, lintPollDescription} from "@/app/new-poll/actions";
 
 const TITLE_MAX = 75;
 const TITLE_MIN = 10;
-const MIN_DESCRIPTION_LENGTH = 30;
+const MAX_DESCRIPTION_LENGTH = 2000;
 
 export default function NewPollForm({categories}: {
     categories: string[]
@@ -18,34 +18,7 @@ export default function NewPollForm({categories}: {
     const router = useRouter();
 
     const [title, setTitle] = useState("");
-    const [markDownDescription, setMarkDownDescription] = useState(`
-## 👋 Welcome to the GitHub Markdown Mini-Guide
-
-Hi there! This short guide shows a few basics of GitHub-flavored Markdown.
-
-### ✨ Basic Formatting
-
-**Bold text**  
-*Italic text*  
-~~Strikethrough~~
-
-### 📋 Lists
-
-- Item 1
-- Item 2
-  - Sub-item
-
-1. First
-2. Second
-
-### 🧱 Blockquote Guide
-
-Blockquotes are used to highlight notes, tips, or quoted text.
-
-Write a blockquote by starting a line with \`>\`:
-
-> This is a blockquote!
-    `);
+    const [markDownDescription, setMarkDownDescription] = useState("");
     const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
@@ -66,8 +39,8 @@ Write a blockquote by starting a line with \`>\`:
             setErr(`Title must be at least ${TITLE_MIN} characters.`);
             return;
         }
-        if (markDownDescription.length < MIN_DESCRIPTION_LENGTH) {
-            setErr(`Description must be at least ${MIN_DESCRIPTION_LENGTH} characters.`);
+        if (markDownDescription.length > MAX_DESCRIPTION_LENGTH) {
+            setErr(`Description must be ${MAX_DESCRIPTION_LENGTH} characters or fewer.`);
             return;
         }
         if (!selectedCategoryName.length) {
@@ -128,7 +101,7 @@ Write a blockquote by starting a line with \`>\`:
             </label>
             <textarea
                 className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 max-h-64 h-64"
-                placeholder="Brief description..."
+                placeholder="Discription of the poll in markdown format (optional)..."
                 value={markDownDescription}
                 onChange={(e) => setMarkDownDescription(e.target.value)}
             />
