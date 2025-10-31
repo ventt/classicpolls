@@ -55,7 +55,10 @@ export default async function SiteHeader() {
                         <SignOutButton/>
                     </>
                 ) : (
+                    <div className="flex items-center gap-2 pb-2">
+                        <span className="text-sm text-emerald-600">only asks for username -&gt;</span>
                     <SignInButton/>
+                    </div>
                 )}
             </nav>
 

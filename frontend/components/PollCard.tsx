@@ -5,6 +5,7 @@ import {PollDetails} from "@/lib/model/poll-details";
 import {useEffect, useMemo, useState} from "react";
 import {cn} from "@/lib/utils";
 import {addPollVote} from "@/app/actions";
+import {signIn} from "next-auth/react";
 
 export default function PollCard({initialPollDetails, loggedIn, isUsersList, onDeleteAction, updatedPollDetailsList}: {
     initialPollDetails: PollDetails;
@@ -102,7 +103,7 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
 
                 <div className="flex items-center gap-2 shrink-0">
                     <ShareButton url={shareUrl} title={pollDetails.title}/>
-                    {loggedIn && !isUsersList && (
+                    {loggedIn && !isUsersList ? (
                         <>
                             <button
                                 aria-label="Upvote"
@@ -133,7 +134,13 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
                                 </svg>
                             </button>
                         </>
-                    )}
+                    ) : <button
+                        onClick={() => signIn("discord")}
+                        className="text-xs px-2 py-1 rounded-md border border-zinc-700 hover:bg-zinc-800 text-zinc-200 transition cursor-pointer"
+                    >
+                        Sign in to vote
+                    </button>
+                    }
                     {isUsersList && (
                         <button
                             aria-label="Delete Poll"
