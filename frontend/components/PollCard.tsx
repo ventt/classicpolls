@@ -56,7 +56,7 @@ export default function PollCard({
 
     const vote = function (choice: boolean) {
         setVoteInProgress(true);
-        addPollVote(pollDetails.id, choice).then(r => {
+        addPollVote(pollDetails.id, choice).then(() => {
             let modified = {} as PollDetails;
             Object.assign(modified, pollDetails);
 
@@ -93,7 +93,7 @@ export default function PollCard({
     if (ratio < 0.4) {
         borderClass = "border-red-600/70";
         cardBg = "bg-zinc-900/80";
-        hoverColor = "hover:text-red-600/70"
+        hoverColor = "hover:text-red-600/70";
     } else if (ratio < 0.7) {
         borderClass = "border-yellow-600/70";
         cardBg = "bg-zinc-900/70";
@@ -113,9 +113,23 @@ export default function PollCard({
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <Link href={`/poll/${pollDetails.id}`} className="block">
-                        <h3 className={`font-semibold text-lg text-white truncate ${hoverColor}`}>{pollDetails.title} </h3>
+                        <h3 className={`font-semibold text-lg text-white truncate ${hoverColor}`}>
+                            {pollDetails.title}
+                        </h3>
                     </Link>
-                    <p className="text-sm text-zinc-400">{pollDetails.category_name}</p>
+
+                    <div className="flex items-center gap-2">
+                        <p className="text-shadow-md text-zinc-400">{pollDetails.category_name}</p>
+
+                        {pollDetails.description && (
+                            <Link
+                                href={`/poll/${pollDetails.id}`}
+                                className="inline-block px-1 py-0.5 text-[10px] text-sm text-purple-400 border border-purple-800 rounded-md hover:bg-purple-800 hover:text-white transition-colors duration-200"
+                            >
+                                With Description
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
