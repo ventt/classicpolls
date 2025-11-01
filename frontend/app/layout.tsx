@@ -6,6 +6,7 @@ import React from "react";
 export const metadata: Metadata = {
     title: "Classic Polls",
     description: "Community Classic+ voting",
+    appleWebApp: {capable: true, title: "Classic Polls", statusBarStyle: "black-translucent"}
 };
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
