@@ -1,14 +1,14 @@
 'use server'
 import SiteHeader from "@/components/SiteHeader";
-import AdLayout from "@/app/ad-layout";
 import {SignInButton} from "@/components/AuthClientButtons";
 import {getServerAuth} from "@/lib/auth";
+import AdLessLayout from "@/app/adless-layout";
 
 
 export default async function Page() {
     const session = await getServerAuth();
     return (
-        <AdLayout>
+        <AdLessLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-6 p-1">
                 <SiteHeader/>
                 <div className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
@@ -238,7 +238,7 @@ export default async function Page() {
 
                 </div>
             </main>
-        </AdLayout>
+        </AdLessLayout>
     );
 }
 
