@@ -92,13 +92,12 @@ export default function PollList({
                     setUpdatedPolls(response);
                     setRefreshErrorCount(0);
                 }).catch(() => {
-                    let newErrorCount = refreshErrorCount + 1;
-                    if (newErrorCount >= MAX_REFRESH_ERROR_COUNT) {
+                    if (refreshErrorCount >= MAX_REFRESH_ERROR_COUNT) {
                         if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
                             window.location.reload();
                         }
                     }
-                    setRefreshErrorCount(newErrorCount);
+                    setRefreshErrorCount(refreshErrorCount + 1);
                 })
             }
         }, 5000);
@@ -106,7 +105,7 @@ export default function PollList({
         return () => {
             clearInterval(intervalId);
         };
-    }, [visiblePollIds]);
+    }, [visiblePollIds, refreshErrorCount]);
     const onVisibilityChange = (inView: boolean, pollId: string) => {
         if (inView) {
             setVisiblePollIds(visiblePollIds.add(pollId));
