@@ -9,6 +9,7 @@ $$
 INSERT INTO api.vote (poll_id, choice)
 VALUES (p_poll_id, p_choice)
 ON CONFLICT (user_sub, poll_id)
-    DO UPDATE SET choice = p_choice;
+    DO UPDATE SET choice     = p_choice,
+                  created_at = CURRENT_TIMESTAMP;
 $$
     LANGUAGE sql SECURITY DEFINER;
