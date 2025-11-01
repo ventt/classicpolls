@@ -28,9 +28,6 @@ const OrderByMap = new Map<string, { orderBy: OrderBy; ascending: boolean }>([
     ['most_downvotes', {orderBy: OrderBy.Downvotes, ascending: false}],
 ]);
 
-const MAX_REFRESH_ERROR_COUNT = 5;
-
-
 export default function PollList({
                                      initPollDetailsList,
                                      initTotal,
@@ -59,7 +56,7 @@ export default function PollList({
     const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const [refreshErrorCount, setRefreshErrorCount] = useState(0);
+    const [isRefreshDisabled, setIsRefreshDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
@@ -87,17 +84,14 @@ export default function PollList({
     const [visiblePollIds, setVisiblePollIds] = useState<Set<string>>(new Set());
     useEffect(() => {
         const intervalId = setInterval(() => {
-            if (visiblePollIds.size && refreshErrorCount < MAX_REFRESH_ERROR_COUNT) {
+            if (visiblePollIds.size && !isRefreshDisabled) {
                 fetchUpdatedVotes(Array.from(visiblePollIds)).then(response => {
                     setUpdatedPolls(response);
-                    setRefreshErrorCount(0);
                 }).catch(() => {
-                    if (refreshErrorCount >= MAX_REFRESH_ERROR_COUNT) {
-                        if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
-                            window.location.reload();
-                        }
+                    setIsRefreshDisabled(true);
+                    if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
+                        window.location.reload();
                     }
-                    setRefreshErrorCount(refreshErrorCount + 1);
                 })
             }
         }, 5000);
@@ -105,7 +99,7 @@ export default function PollList({
         return () => {
             clearInterval(intervalId);
         };
-    }, [visiblePollIds, refreshErrorCount]);
+    }, [visiblePollIds, isRefreshDisabled]);
     const onVisibilityChange = (inView: boolean, pollId: string) => {
         if (inView) {
             setVisiblePollIds(visiblePollIds.add(pollId));
