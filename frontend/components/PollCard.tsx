@@ -134,12 +134,11 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
                                 </svg>
                             </button>
                         </>
-                    ) : <button
-                        onClick={() => signIn("discord")}
-                        className="text-xs px-2 py-1 rounded-md border border-zinc-700 hover:bg-zinc-800 text-zinc-200 transition cursor-pointer"
-                    >
-                        Sign in to vote
-                    </button>
+                    ) : !isUsersList && (
+                        <button onClick={() => signIn("discord")}
+                                className="text-xs px-2 py-1 rounded-md border border-zinc-700 hover:bg-zinc-800 text-zinc-200 transition cursor-pointer">
+                            Sign in to vote
+                        </button>)
                     }
                     {isUsersList && (
                         <button
