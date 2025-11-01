@@ -80,7 +80,7 @@ export default function PollList({
     }, [limit, offset, orderBy, ascending, selectedCategoryName, searchTerm]);
 
     // ----- Auto-refresh visible polls -----
-    let visiblePollIds = new Set<string>();
+    const [visiblePollIds, setVisiblePollIds] = useState<Set<string>>(new Set());
     useEffect(() => {
         const intervalId = setInterval(() => {
             if (visiblePollIds.size) {
@@ -88,17 +88,18 @@ export default function PollList({
                     setUpdatedPolls(response);
                 })
             }
-        }, 10000);
+        }, 5000);
 
         return () => {
             clearInterval(intervalId);
         };
-    }, []);
+    }, [visiblePollIds]);
     const onVisibilityChange = (inView: boolean, pollId: string) => {
         if (inView) {
-            visiblePollIds = visiblePollIds.add(pollId);
+            setVisiblePollIds(visiblePollIds.add(pollId));
         } else {
             visiblePollIds.delete(pollId);
+            setVisiblePollIds(new Set(visiblePollIds));
         }
     }
 
@@ -109,7 +110,7 @@ export default function PollList({
     const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
 
     const onDelete = (pollId: string) => {
-        deletePoll(pollId).then(r => setPolls(polls.filter(poll => poll.id !== pollId)))
+        deletePoll(pollId).then(() => setPolls(polls.filter(poll => poll.id !== pollId)))
     }
 
     return (
