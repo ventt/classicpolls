@@ -112,7 +112,7 @@ export default function PollCard({
         <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`} ref={inViewRef}>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                    <Link href={`/poll/${pollDetails.id}`} className="block">
+                    <Link href={`/poll/${pollDetails.id}`} className="block" prefetch={false}>
                         <h3 className={`font-semibold text-lg text-white truncate ${hoverColor}`}>
                             {pollDetails.title}
                         </h3>
@@ -122,9 +122,9 @@ export default function PollCard({
                         <p className="text-shadow-md text-zinc-400">{pollDetails.category_name}</p>
 
                         {pollDetails.description && (
-                            <Link
-                                href={`/poll/${pollDetails.id}`}
-                                className="inline-block px-1 py-0.5 text-[10px] text-sm text-purple-400 border border-purple-800 rounded-md hover:bg-purple-800 hover:text-white transition-colors duration-200"
+                            <Link prefetch={false}
+                                  href={`/poll/${pollDetails.id}`}
+                                  className="inline-block px-1 py-0.5 text-[10px] text-sm text-purple-400 border border-purple-800 rounded-md hover:bg-purple-800 hover:text-white transition-colors duration-200"
                             >
                                 with description
                             </Link>
