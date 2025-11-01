@@ -65,39 +65,6 @@ export async function fetchPollsDetails(limit: number, offset: number, orderBy: 
     };
 }
 
-export async function fetchUpdatedVotes(pollIdList: string[]) {
-    pollIdList = pollIdList.slice(0, 10); // limit to 10 ids
-
-    const url = new URL(process.env.API_URL_POSTGREST + '/poll_details');
-
-    url.searchParams.append('select', [
-        'id',
-        'user_choice',
-        'upvotes',
-        'downvotes',
-        'total_votes',
-    ].join(','));
-    url.searchParams.append('id', 'in.(' + pollIdList.join(',') + ')');
-
-    const headers = [
-        ['Accept', 'application/json'],
-        ['Content-Type', 'application/json'],
-    ]
-
-    const accessToken = (await getServerAuth())?.accessToken;
-
-    if (accessToken) {
-        headers.push(['Authorization', `Bearer ${accessToken}`]);
-    }
-
-    const response = await fetch(url, {
-        headers: headers as HeadersInit,
-        method: 'GET',
-    });
-
-    return await response.json();
-}
-
 export async function addPollVote(pollId: string, choice: boolean) {
     return (await postgrest()).rpc('add_poll_vote', {p_poll_id: pollId, p_choice: choice});
 }

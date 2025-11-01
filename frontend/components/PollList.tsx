@@ -5,7 +5,7 @@ import PollCard from "@/components/PollCard";
 import {PollDetails} from "@/lib/model/poll-details";
 import FancySelect from "@/components/FancySelect";
 import PaginationBar from "@/app/pagination-bar";
-import {fetchPollsDetails, fetchUpdatedVotes} from "@/app/actions";
+import {fetchPollsDetails} from "@/app/actions";
 import {SessionProvider} from "next-auth/react";
 import {deletePoll} from "@/app/my-polls/my-polls";
 
@@ -56,8 +56,6 @@ export default function PollList({
     const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const [isRefreshDisabled, setIsRefreshDisabled] = useState<boolean>(false);
-
     useEffect(() => {
         const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
 
@@ -84,13 +82,10 @@ export default function PollList({
     const [visiblePollIds, setVisiblePollIds] = useState<Set<string>>(new Set());
     useEffect(() => {
         const intervalId = setInterval(() => {
-            if (visiblePollIds.size && !isRefreshDisabled) {
-                fetchUpdatedVotes(Array.from(visiblePollIds)).then(response => {
-                    setUpdatedPolls(response);
-                }).catch(() => {
-                    setIsRefreshDisabled(true);
-                    if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
-                        window.location.reload();
+            if (visiblePollIds.size) {
+                fetch('/api/poll-updates?poll_ids=' + Array.from(visiblePollIds).join(',')).then(res => {
+                    if (res.ok) {
+                        res.json().then(setUpdatedPolls)
                     }
                 })
             }
@@ -99,7 +94,7 @@ export default function PollList({
         return () => {
             clearInterval(intervalId);
         };
-    }, [visiblePollIds, isRefreshDisabled]);
+    }, [visiblePollIds]);
     const onVisibilityChange = (inView: boolean, pollId: string) => {
         if (inView) {
             setVisiblePollIds(visiblePollIds.add(pollId));
