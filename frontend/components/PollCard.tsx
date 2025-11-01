@@ -126,7 +126,7 @@ export default function PollCard({
                                 href={`/poll/${pollDetails.id}`}
                                 className="inline-block px-1 py-0.5 text-[10px] text-sm text-purple-400 border border-purple-800 rounded-md hover:bg-purple-800 hover:text-white transition-colors duration-200"
                             >
-                                With Description
+                                with description
                             </Link>
                         )}
                     </div>
