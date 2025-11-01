@@ -6,21 +6,29 @@ import {useEffect, useMemo, useState} from "react";
 import {cn} from "@/lib/utils";
 import {addPollVote} from "@/app/actions";
 import {signIn} from "next-auth/react";
+import {useOnInView} from "react-intersection-observer";
 
-export default function PollCard({initialPollDetails, loggedIn, isUsersList, onDeleteAction, updatedPollDetailsList}: {
+export default function PollCard({
+                                     initialPollDetails,
+                                     loggedIn,
+                                     isUsersList,
+                                     onDeleteAction,
+                                     updatedPollDetailsList,
+                                     inViewAction
+                                 }: {
     initialPollDetails: PollDetails;
     loggedIn: boolean;
     isUsersList: boolean;
     onDeleteAction: (pollId: string) => void;
     updatedPollDetailsList?: PollDetails[]; // Used to refresh poll details periodically
+    inViewAction?: (inView: boolean, pollId: string) => void;
 }) {
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
     const [voteInProgress, setVoteInProgress] = useState<boolean>(false);
 
     const [showConfirm, setShowConfirm] = useState(false);
-    const ratio = useMemo(
-        () => (pollDetails.upvotes / pollDetails.total_votes), [pollDetails]
-    );
+
+    const ratio = useMemo(() => (pollDetails.upvotes / pollDetails.total_votes), [pollDetails]);
     const votePercentage = useMemo(
         () => (pollDetails.total_votes ? Math.round((pollDetails.upvotes / pollDetails.total_votes) * 100) : 0),
         [pollDetails]
@@ -31,11 +39,20 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
         useEffect(() => {
             const newPollDetails = updatedPollDetailsList.filter(pd => pd.id == pollDetails.id).pop();
             if (newPollDetails) {
-                setPollDetails(newPollDetails);
+                // Merge new details into current pollDetails
+                setPollDetails({...pollDetails, ...newPollDetails});
             }
         }, [updatedPollDetailsList]);
     }
 
+    const handleInViewChange = (inView: boolean) => {
+        if (!!inViewAction) {
+            inViewAction(inView, pollDetails.id);
+        }
+    }
+
+    // Call inViewAction when visibility changes
+    const inViewRef = useOnInView(handleInViewChange);
 
     const vote = function (choice: boolean) {
         setVoteInProgress(true);
@@ -92,7 +109,7 @@ export default function PollCard({initialPollDetails, loggedIn, isUsersList, onD
         : `/poll/${pollDetails.id}`;
 
     return (
-        <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`}>
+        <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`} ref={inViewRef}>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <Link href={`/poll/${pollDetails.id}`} className="block">

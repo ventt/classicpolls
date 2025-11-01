@@ -5,7 +5,7 @@ import PollCard from "@/components/PollCard";
 import {PollDetails} from "@/lib/model/poll-details";
 import FancySelect from "@/components/FancySelect";
 import PaginationBar from "@/app/pagination-bar";
-import {fetchPollsDetails} from "@/app/actions";
+import {fetchPollsDetails, fetchUpdatedVotes} from "@/app/actions";
 import {SessionProvider} from "next-auth/react";
 import {deletePoll} from "@/app/my-polls/my-polls";
 
@@ -57,9 +57,10 @@ export default function PollList({
     const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const load = async () => {
+    useEffect(() => {
         const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
-        return fetchPollsDetails(
+
+        fetchPollsDetails(
             limit,
             offset,
             orderBy,
@@ -67,11 +68,7 @@ export default function PollList({
             category,
             searchTerm == '' ? undefined : searchTerm,
             isUsersList ? userSub : undefined,
-        )
-    };
-
-    useEffect(() => {
-        load().then(response => {
+        ).then(response => {
             setUpdatedPolls([]);
             setPolls(response.data);
             setTotal(response.count);
@@ -82,19 +79,28 @@ export default function PollList({
         });
     }, [limit, offset, orderBy, ascending, selectedCategoryName, searchTerm]);
 
-    // Refresh every 10s
+    // ----- Auto-refresh visible polls -----
+    let visiblePollIds = new Set<string>();
     useEffect(() => {
         const intervalId = setInterval(() => {
-            // Make sure no other load is in progress
-            load().then(response => {
-                setUpdatedPolls(response.data);
-            })
+            if (visiblePollIds.size) {
+                fetchUpdatedVotes(Array.from(visiblePollIds)).then(response => {
+                    setUpdatedPolls(response);
+                })
+            }
         }, 10000);
 
         return () => {
             clearInterval(intervalId);
         };
     }, []);
+    const onVisibilityChange = (inView: boolean, pollId: string) => {
+        if (inView) {
+            visiblePollIds = visiblePollIds.add(pollId);
+        } else {
+            visiblePollIds.delete(pollId);
+        }
+    }
 
     const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit])
     const currentPage = useMemo(() => offset / limit + 1, [offset, limit])
@@ -172,6 +178,7 @@ export default function PollList({
                                 isUsersList={isUsersList}
                                 onDeleteAction={onDelete}
                                 updatedPollDetailsList={updatedPolls}
+                                inViewAction={onVisibilityChange}
                             />
                         ))}
                         {!polls.length && (
