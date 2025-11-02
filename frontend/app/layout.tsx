@@ -15,11 +15,15 @@ export const viewport: Viewport = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body className="bg-gradient-to-t from-lime-900 via-emerald-800 to-yellow-950 sm:bg-[url(/wallpaper.webp)] sm:bg-cover sm:bg-center sm:bg-fixed sm:bg-no-repeat
+        <body className="min-h-screen bg-gradient-to-t from-lime-900 via-emerald-800 to-yellow-950 sm:bg-[url(/wallpaper.webp)] sm:bg-cover sm:bg-center sm:bg-fixed sm:bg-no-repeat
                             overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900"
         >
-        <div className="bg-black/70 backdrop-blur-sm ">
-            {children}
+        <div className="min-h-screen  bg-black/70 backdrop-blur-sm ">
+            <div className="flex justify-self-center m-0 w-[70%]">
+                <main className="flex flex-col gap-4 w-full pt-2">
+                    {children}
+                </main>
+            </div>
         </div>
         </body>
         </html>

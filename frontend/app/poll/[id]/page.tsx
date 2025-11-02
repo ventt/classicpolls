@@ -10,7 +10,6 @@ import {getServerSession} from "next-auth";
 import {headers} from "next/headers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import AdLessLayout from "@/app/adless-layout";
 import {PollDetails} from "@/lib/model/poll-details";
 
 function getAbsoluteUrl(id: string, host: string) {
@@ -118,52 +117,50 @@ export default async function PollPage({params}: { params: Promise<{ id: string 
 
 
     return (
-        <AdLessLayout>
-            <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 p-1">
-                <SiteHeader/>
+        <>
+            <SiteHeader/>
 
-                <div className="flex items-start justify-between gap-4 mt-2">
-                    <div className="min-w-0">
-                        <h1 className="text-2xl md:text-3xl font-bold text-white">
-                            {pollDetails.title}
-                        </h1>
-                        <p className="text-sm text-zinc-400">{pollDetails.category_name}</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <ShareButton url={shareUrl} title={pollDetails.title}/>
-                        <ReportButton topicId={pollDetails.id}/>
-                    </div>
+            <div className="flex items-start justify-between gap-4 mt-2">
+                <div className="min-w-0">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white">
+                        {pollDetails.title}
+                    </h1>
+                    <p className="text-sm text-zinc-400">{pollDetails.category_name}</p>
                 </div>
-                <div
-                    className="h-64 w-f overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 border  rounded-lg border-zinc-800 p-6">
-                    {pollDetails.description ? (
-
-                        <article
-                            className="prose prose-sm prose-slate prose-invert">
-                            <Markdown remarkPlugins={[remarkGfm]}>{pollDetails.description}</Markdown>
-                        </article>
-
-                    ) : (
-                        <article className="prose prose-sm prose-slate prose-invert">
-                            No Description
-                        </article>
-                    )}
+                <div className="flex gap-2">
+                    <ShareButton url={shareUrl} title={pollDetails.title}/>
+                    <ReportButton topicId={pollDetails.id}/>
                 </div>
+            </div>
+            <div
+                className="h-64 w-f overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 border  rounded-lg border-zinc-800 p-6">
+                {pollDetails.description ? (
 
-                <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
+                    <article
+                        className="prose prose-sm prose-slate prose-invert">
+                        <Markdown remarkPlugins={[remarkGfm]}>{pollDetails.description}</Markdown>
+                    </article>
 
-                <div className="mt-6">
-                    <Link href="/" className="text-emerald-400 underline">
-                        ← Back to list
-                    </Link>
-                </div>
-            </main>
+                ) : (
+                    <article className="prose prose-sm prose-slate prose-invert">
+                        No Description
+                    </article>
+                )}
+            </div>
+
+            <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
+
+            <div className="mt-6">
+                <Link href="/" className="text-emerald-400 underline">
+                    ← Back to list
+                </Link>
+            </div>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(jsonLdForPoll(pollDetails, shareUrl)).replace(/</g, '\\u003c'),
                 }}
             />
-        </AdLessLayout>
+        </>
     );
 }

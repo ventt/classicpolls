@@ -6,9 +6,9 @@ export default async function SiteHeader() {
     const session = await getServerAuth();
 
     return (
-        <header className="flex items-center justify-between border-b border-zinc-800 pb-3 text-white relative">
+        <header className="flex items-center pb-2 pt-2 justify-between border-b border-zinc-800 text-white z-20">
             {/* Logo */}
-            <h1 className="xl:text-5xl lg:text-3xl text-3xl font-extrabold tracking-wide">
+            <h1 className="xl:text-5xl text-4xl font-extrabold tracking-wide">
                 <a
                     href="/"
                     aria-label="Go to homepage"
