@@ -24,12 +24,7 @@ export default async function SiteHeader() {
                      0 0 6px rgba(80,255,160,0.15)`,
               }}
           >
-            Classic
-          </span>
-                    &nbsp;
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r
-                           from-lime-300 via-emerald-300 to-lime-400 transition-all duration-300">
-            Polls
+            Classic Polls
           </span>
                 </a>
             </h1>
