@@ -21,7 +21,7 @@ function getAbsoluteUrl(id: string, host: string) {
 function jsonLdForPoll(pollDetails: PollDetails, url: string) {
     return {
         "@context": "https://schema.org",
-        "@type": "QAPage",
+        "@type": "WebSite",
         about: {
             "@type": "VideoGame",
             name: "World of Warcraft Classic"

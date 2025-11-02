@@ -25,7 +25,7 @@ function jsonLdForPollList(polls: PollDetails[], host: string) {
                 position: i + 1,
                 url: `${host}/poll/${p.id}`,
                 item: {
-                    "@type": "OpinionPoll",
+                    "@type": "Thing",
                     "@id": `${host}/poll/${p.id}`,
                     name: p.title,
                     description: p.description ?? undefined,
