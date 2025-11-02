@@ -4,11 +4,11 @@ import React from "react";
 
 
 export const metadata: Metadata = {
-    title: "Classic Polls",
-    description: "Community Classic+ voting",
+    title: "Classic Polls - The Classic+ voting site",
+    alternates: {canonical: "/"},
+    description: "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them.",
     appleWebApp: {capable: true, title: "Classic Polls", statusBarStyle: "black-translucent"}
 };
-
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">

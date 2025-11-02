@@ -11,23 +11,116 @@ import {headers} from "next/headers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AdLessLayout from "@/app/adless-layout";
+import {PollDetails} from "@/lib/model/poll-details";
 
-export default async function PollPage({params}: {params: Promise<{ id: string }>;}){
-    const { id } = await params;
+function getAbsoluteUrl(id: string, host: string) {
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    return `${protocol}://${host}/poll/${id}`;
+}
+
+function jsonLdForPoll(pollDetails: PollDetails, url: string) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "QAPage",
+        about: {
+            "@type": "VideoGame",
+            name: "World of Warcraft Classic"
+        },
+        audience: {
+            "@type": "Audience",
+            audienceType: "Gamers"
+        },
+        datePublished: pollDetails.created_at,
+        mainEntity: {
+            "@type": "Question",
+            name: pollDetails.title,
+            text: pollDetails.description ?? undefined,
+            description: "A community-created poll surveying the wider World of Warcraft playerbase about the WoW Classic+ features they would most like to see added to the game.",
+            url: url,
+            upvoteCount: pollDetails.upvotes,
+            downvoteCount: pollDetails.downvotes,
+            answerCount: pollDetails.total_votes,
+            interactionStatistic: [
+                {
+                    "@type": "InteractionCounter",
+                    interactionType: {"@type": "VoteAction"},
+                    userInteractionCount: pollDetails.total_votes,
+                },
+                {
+                    "@type": "InteractionCounter",
+                    interactionType: {"@type": "LikeAction"},
+                    userInteractionCount: pollDetails.upvotes,
+                },
+                {
+                    "@type": "InteractionCounter",
+                    interactionType: {"@type": "DislikeAction"},
+                    userInteractionCount: pollDetails.downvotes,
+                },
+            ],
+        },
+        isPartOf: {
+            "@type": "CollectionPage",
+            name: "Classic Polls",
+        },
+    };
+}
+
+export async function generateMetadata({params}: { params: { id: string } }) {
+    const {id} = await params;
+    const pollDetails = await fetchPollDetails(id);
+
+    if (!pollDetails) {
+        return {
+            title: "Poll not found",
+            robots: {
+                index: false,
+                follow: false,
+            }
+        }
+    }
+
+    const title = `${pollDetails.title ?? "Classic+ poll"} | Classic Polls`;
+    const description = `A community vote on visionary Classic+ feature | ${pollDetails.title}`;
+    const host = (await headers()).get("host") ?? "";
+    const url = getAbsoluteUrl(id, host);
+    return {
+        title: title,
+        description: description,
+        alternates: {canonical: url},
+        openGraph: {
+            type: "website",
+            url: url,
+            title: title,
+            description: description,
+        },
+        twitter: {
+            title,
+            description: description,
+        },
+        formatDetection: {
+            email: false,
+            address: false,
+            telephone: false,
+        }
+    }
+}
+
+export default async function PollPage({params}: { params: Promise<{ id: string }>; }) {
+    const {id} = await params;
     const pollDetails = await fetchPollDetails(id);
     if (!pollDetails) notFound();
-    const votes  = await fetchVoteDetails(pollDetails.id, 6);
+    const votes = await fetchVoteDetails(pollDetails.id, 6);
     const session = await getServerSession()
 
     // Getting share URL
-    const host = (await headers()).get("host");
-    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const shareUrl = `${protocol}://${host}/poll/${pollDetails.id}`;
+    const host = (await headers()).get("host") ?? "";
+    const shareUrl = getAbsoluteUrl(pollDetails.id, host);
+
 
     return (
         <AdLessLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-4 p-1">
-                <SiteHeader />
+                <SiteHeader/>
 
                 <div className="flex items-start justify-between gap-4 mt-2">
                     <div className="min-w-0">
@@ -54,7 +147,7 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                         <article className="prose prose-sm prose-slate prose-invert">
                             No Description
                         </article>
-                )}
+                    )}
                 </div>
 
                 <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
@@ -65,6 +158,12 @@ export default async function PollPage({params}: {params: Promise<{ id: string }
                     </Link>
                 </div>
             </main>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLdForPoll(pollDetails, shareUrl)).replace(/</g, '\\u003c'),
+                }}
+            />
         </AdLessLayout>
     );
 }

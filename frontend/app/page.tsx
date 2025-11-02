@@ -5,13 +5,50 @@ import {fetchPollsDetails} from "@/app/actions";
 import {getServerAuth} from "@/lib/auth";
 import Link from "next/link";
 import AdLessLayout from "@/app/adless-layout";
+import {PollDetails} from "@/lib/model/poll-details";
+import {headers} from "next/headers";
 
+
+function jsonLdForPollList(polls: PollDetails[], host: string) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Classic Polls",
+        description:
+            "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them.",
+        mainEntity: {
+            "@type": "ItemList",
+            itemListOrder: "https://schema.org/ItemListOrderAscending",
+            numberOfItems: polls.length,
+            itemListElement: polls.map((p, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                url: `${host}/poll/${p.id}`,
+                item: {
+                    "@type": "OpinionPoll",
+                    "@id": `${host}/poll/${p.id}`,
+                    name: p.title,
+                    description: p.description ?? undefined,
+                    url: `${host}/poll/${p.id}`,
+                    interactionStatistic: [
+                        {
+                            "@type": "InteractionCounter",
+                            interactionType: {"@type": "VoteAction"},
+                            userInteractionCount: p.total_votes,
+                        },
+                    ],
+                },
+            })),
+        },
+    };
+}
 
 export default async function Page() {
     const initPageSize = 20
     const categories = await fetchCategories();
     const session = await getServerAuth();
     const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score', false);
+    const host = (await headers()).get("host") ?? "";
 
     return (
         <AdLessLayout>
@@ -34,6 +71,12 @@ export default async function Page() {
                 <PollList initPollDetailsList={pollDetails.data} initTotal={pollDetails.count}
                           initPageSize={initPageSize} categories={categories} userSub={session?.user.id}/>
             </main>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLdForPollList(pollDetails.data, host)).replace(/</g, '\\u003c'),
+                }}
+            />
         </AdLessLayout>
     );
 }

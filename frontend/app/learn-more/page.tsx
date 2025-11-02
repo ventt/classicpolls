@@ -3,15 +3,80 @@ import SiteHeader from "@/components/SiteHeader";
 import {SignInButton} from "@/components/AuthClientButtons";
 import {getServerAuth} from "@/lib/auth";
 import AdLessLayout from "@/app/adless-layout";
+import {headers} from "next/headers";
 
+function jsonLdForLearnMore(host: string) {
+    const pageUrl = `${host}/learn-more`;
+    const siteName = "Classic Polls";
+
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "AboutPage",
+                "@id": `${pageUrl}#about`,
+                url: pageUrl,
+                name: "Learn more | Classic Polls",
+                inLanguage: "en",
+                isPartOf: {"@type": "WebSite", url: host, name: siteName},
+                description:
+                    "Community-made Classic+ vision platform for World of Warcraft: browse polls, sign in with Discord to vote, and create new polls.",
+                about: {
+                    "@type": "VideoGame",
+                    name: "World of Warcraft Classic",
+                },
+                audience: {"@type": "Audience", audienceType: "Gamers"},
+                hasPart: [
+                    {"@id": `${pageUrl}#howto-sign-in`},
+                    {"@id": `${pageUrl}#howto-vote-create`},
+                ],
+            },
+            {
+                "@type": "HowTo",
+                "@id": `${pageUrl}#howto-sign-in`,
+                name: "Sign in with Discord",
+                description: "Voting and poll creation require a quick Discord sign-in.",
+                step: [
+                    {"@type": "HowToStep", position: 1, name: "Open Classic Polls"},
+                    {"@type": "HowToStep", position: 2, name: "Click Sign in with Discord"},
+                    {"@type": "HowToStep", position: 3, name: "Authorize display name and avatar only"},
+                ],
+            },
+            {
+                "@type": "HowTo",
+                "@id": `${pageUrl}#howto-vote-create`,
+                name: "Vote and create polls",
+                description: "Cast your vote on any poll and turn new ideas into polls.",
+                step: [
+                    {"@type": "HowToStep", position: 1, name: "Open a poll and choose your answer"},
+                    {"@type": "HowToStep", position: 2, name: "Share the poll with friends or guildmates"},
+                    {"@type": "HowToStep", position: 3, name: "Click New Poll to create your own"},
+                    {"@type": "HowToStep", position: 4, name: "Write a clear yes/no question with brief context"},
+                    {"@type": "HowToStep", position: 5, name: "Publish and iterate based on feedback"},
+                ],
+            },
+            {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                    {"@type": "ListItem", position: 1, name: "Home", item: `${host}/`},
+                    {"@type": "ListItem", position: 2, name: "Learn more", item: pageUrl},
+                ],
+            },
+        ],
+    };
+}
 
 export default async function Page() {
     const session = await getServerAuth();
+    const host = (await headers()).get("host") ?? "";
+    const jsonLd = jsonLdForLearnMore(host);
+
     return (
         <AdLessLayout>
             <main className="col-span-12 lg:col-span-8 flex flex-col gap-6 p-1">
                 <SiteHeader/>
-                <div className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
+                <div
+                    className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
                     {/* Intro */}
                     <section className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6">
                         <h1 className="text-2xl font-semibold text-emerald-200 tracking-tight">Learn more</h1>
@@ -238,8 +303,12 @@ export default async function Page() {
 
                 </div>
             </main>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+                }}
+            />
         </AdLessLayout>
     );
 }
-
-
