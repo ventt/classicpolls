@@ -14,7 +14,7 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <html lang="en">
         <body className="min-h-screen bg-cover bg-center bg-fixed"
               style={{
-                  backgroundImage: "url('/wallpaper.jpg')",
+                  backgroundImage: "url('/wallpaper.webp')",
                   backgroundRepeat: "no-repeat",
                   backgroundSize: "cover",
                   backgroundAttachment: "fixed",

@@ -40,6 +40,6 @@
     "typescript": "^5"
   },
   "browserslist": [
-    "defaults"
+    "defaults and fully supports es6-module"
   ]
 }
