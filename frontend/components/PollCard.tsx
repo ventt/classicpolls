@@ -83,6 +83,10 @@ export default function PollCard({
 
             setPollDetails(modified);
             setVoteInProgress(false);
+        }).catch(() => {
+            if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
+                window.location.reload();
+            }
         });
     }
 

@@ -72,6 +72,10 @@ export default function PollInteractions({initialPollDetails, votes, session}: {
 
 
             setVoteInProgress(false);
+        }).catch(() => {
+            if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
+                window.location.reload();
+            }
         });
     }
 
