@@ -30,7 +30,7 @@ export default async function SiteHeader() {
             </h1>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-3">
+            <nav className="hidden md:flex items-center gap-3">
                 {session ? (
                     <>
                         {session.user?.image ? (
@@ -58,7 +58,7 @@ export default async function SiteHeader() {
             </nav>
 
             {/* Mobile Hamburger (no JS) */}
-            <details className="lg:hidden relative group">
+            <details className="md:hidden relative group">
                 <summary
                     aria-label="Toggle menu"
                     className="list-none [&::-webkit-details-marker]:hidden cursor-pointer p-2 rounded-md hover:bg-zinc-800 transition flex items-center"

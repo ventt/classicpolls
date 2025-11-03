@@ -115,7 +115,7 @@ export default function PollList({
     }
 
     return (
-        <div className="flex lg:max-h-[80vh] flex-col gap-3">
+        <div className="flex lg:max-h-[81vh] flex-col gap-3">
             <section className="flex flex-col md:flex-row gap-2 items-center">
                 <input
                     className="flex w-full flex-1 border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
