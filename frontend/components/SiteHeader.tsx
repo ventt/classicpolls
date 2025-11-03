@@ -9,7 +9,7 @@ export default async function SiteHeader() {
     return (
         <header className="flex items-center pb-2 pt-2 justify-between border-b border-zinc-800 text-white">
             {/* Logo */}
-            <h1 className="xl:text-5xl text-4xl font-extrabold tracking-wide">
+            <h1 className="xl:text-6xl md:text-5xl text-4xl font-extrabold tracking-wide">
                 <a
                     href="/"
                     aria-label="Go to homepage"
@@ -17,21 +17,21 @@ export default async function SiteHeader() {
                      hover:drop-shadow-[0_0_6px_rgba(80,255,180,0.35)]
                      focus:outline-none rounded-md"
                 >
-          <span
-              className="relative text-transparent bg-clip-text bg-gradient-to-r
-                       from-emerald-100 via-emerald-300 to-lime-300"
-              style={{
-                  textShadow: `0 0 3px rgba(80,255,180,0.25),
-                     0 0 6px rgba(80,255,160,0.15)`,
-              }}
-          >
-            Classic Polls
-          </span>
+                      <span
+                          className="relative text-transparent bg-clip-text bg-gradient-to-r
+                                   from-emerald-100 via-emerald-300 to-lime-300"
+                          style={{
+                              textShadow: `0 0 3px rgba(80,255,180,0.25),
+                                 0 0 6px rgba(80,255,160,0.15)`,
+                          }}
+                      >
+                        Classic Polls
+                      </span>
                 </a>
             </h1>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-3">
+            <nav className="hidden md:flex items-center gap-3 self-end pb-1 xl:pb-2 text-xs lg:text-sm xl:text-md">
                 {session ? (
                     <>
                         {session.user?.image ? (
