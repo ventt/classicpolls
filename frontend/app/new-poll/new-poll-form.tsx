@@ -75,7 +75,7 @@ export default function NewPollForm({categories}: {
     };
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 pt-2">
             {err && <div className="text-red-400 text-sm">{err}</div>}
             <label className="text-sm font-medium text-zinc-300 flex justify-between items-center">
                 <span>Title</span>
