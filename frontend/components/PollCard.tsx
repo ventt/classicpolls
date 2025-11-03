@@ -179,7 +179,7 @@ export default function PollCard({
                     {isUsersList && (
                         <button
                             aria-label="Delete Poll"
-                            className="p-0.5 rounded-lg border border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 text-white transition-all cursor-pointer "
+                            className="relative inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-xs border-red-700/60 bg-red-900/30 hover:bg-red-800/50 active:scale-95 text-white transition-all cursor-pointer "
                             onClick={() => setShowConfirm(true)}
                             title="Delete"
                         >
@@ -219,6 +219,7 @@ export default function PollCard({
                             </div>
                         </div>
                     )}
+
 
                 </div>
             </div>
