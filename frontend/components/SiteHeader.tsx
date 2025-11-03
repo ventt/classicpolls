@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getServerAuth} from "@/lib/auth";
 import {SignInButton, SignOutButton} from "@/components/AuthClientButtons";
+import CloseDetailsOnRouteChange from "@/components/CloseDetailsOnRouteChange";
 
 export default async function SiteHeader() {
     const session = await getServerAuth();
@@ -96,6 +97,7 @@ export default async function SiteHeader() {
                     )}
                 </div>
             </details>
+            <CloseDetailsOnRouteChange/>
         </header>
     );
 }
