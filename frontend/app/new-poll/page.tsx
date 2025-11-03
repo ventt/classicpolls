@@ -13,17 +13,16 @@ export default async function NewTopicPage() {
 
     return (
         <>
-            <header className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                <h1 className="text-2xl font-bold text-white">Create a New Poll</h1>
-                <Link
-                    href="/"
-                    className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition text-white"
-                >
-                    Back
-                </Link>
-            </header>
-
-            <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 shadow-sm">
+            <div className="flex flex-col bg-zinc-900/60 border border-zinc-800 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+                    <h1 className="text-2xl font-bold text-white">Create a New Poll</h1>
+                    <Link
+                        href="/"
+                        className="px-3 py-1 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition text-white"
+                    >
+                        Back
+                    </Link>
+                </div>
                 <NewPollForm categories={categories}/>
             </div>
         </>

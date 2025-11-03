@@ -80,8 +80,8 @@ export default function NewPollForm({categories}: {
             <label className="text-sm font-medium text-zinc-300 flex justify-between items-center">
                 <span>Title</span>
                 <span className={`text-xs ${title.length > TITLE_MAX ? "text-red-400" : "text-zinc-500"}`}>
-          {title.length} / {TITLE_MAX}
-        </span>
+                        {title.length} / {TITLE_MAX}
+                </span>
             </label>
             <input
                 className={`border rounded-lg px-3 py-2 bg-zinc-900 text-zinc-100 border-zinc-800 focus:outline-none focus:ring-1 ${
@@ -90,25 +90,27 @@ export default function NewPollForm({categories}: {
                 placeholder="Enter topic title"
                 value={title}
                 maxLength={TITLE_MAX + 1}
-                onChange={(e) => setTitle(e.target.value)}
-            />
+                onChange={(e) => setTitle(e.target.value)}/>
 
             <label className="text-sm font-medium text-zinc-300">
-                Description (<a target="_blank" rel="noopener noreferrer"
-                                className="text-zinc-500 hover:text-emerald-300"
-                                href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet/7cbbd78fe93a3342f04fdd0e00a6a6ec5627a18e">Markdown
-                cheatsheat</a>)
+                Description (
+                <a target="_blank" rel="noopener noreferrer"
+                   className="text-zinc-500 hover:text-emerald-300"
+                   href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet/7cbbd78fe93a3342f04fdd0e00a6a6ec5627a18e">Markdown
+                    cheatsheat
+                </a> )
             </label>
+
             <textarea
                 className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 max-h-64 h-64"
                 placeholder="Discription of the poll in markdown format (optional)..."
                 value={markDownDescription}
-                onChange={(e) => setMarkDownDescription(e.target.value)}
-            />
+                onChange={(e) => setMarkDownDescription(e.target.value)}/>
 
             <label className="text-sm font-medium text-zinc-300">
                 Preview
             </label>
+
             <div
                 className="h-64 w-f overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 border  rounded-lg border-zinc-800 p-6 backdrop-blur-sm">
                 <article
@@ -116,7 +118,6 @@ export default function NewPollForm({categories}: {
                     <Markdown remarkPlugins={[remarkGfm]}>{markDownDescription}</Markdown>
                 </article>
             </div>
-
 
             <label className="text-sm font-medium text-zinc-300">Category</label>
             <FancySelect

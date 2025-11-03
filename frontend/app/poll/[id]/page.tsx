@@ -2,7 +2,6 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import PollInteractions from "@/app/poll/PollInteractions";
-import SiteHeader from "@/components/SiteHeader";
 import ReportButton from "@/components/ReportButton";
 import {fetchPollDetails} from "@/lib/postgrest/poll-details";
 import {fetchVoteDetails} from "@/app/poll/vote-details";
@@ -118,8 +117,6 @@ export default async function PollPage({params}: { params: Promise<{ id: string 
 
     return (
         <>
-            <SiteHeader/>
-
             <div className="flex items-start justify-between gap-4 mt-2">
                 <div className="min-w-0">
                     <h1 className="text-2xl md:text-3xl font-bold text-white">

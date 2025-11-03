@@ -115,47 +115,49 @@ export default function PollList({
     }
 
     return (
-        <>
-
-            <section className="flex flex-wrap gap-2 items-center">
+        <div className="flex lg:max-h-[80vh] flex-col gap-3">
+            <section className="flex flex-col md:flex-row gap-2 items-center">
                 <input
-                    className="border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 flex-1 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
+                    className="flex w-full flex-1 border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={event => setSearchTerm(event.target.value)}
                 />
-                <FancySelect
-                    ariaLabel="Filter by category"
-                    value={selectedCategoryName}
-                    onChangeAction={setSelectedCategoryName}
-                    options={[
-                        {label: "All categories", value: ''},
-                        ...categories.map((c: string) => ({label: c, value: c})),
-                    ]}
-                />
-                <FancySelect
-                    ariaLabel="Sort polls"
-                    value={selectedOrderBy}
-                    onChangeAction={(val: string) => {
-                        const order = OrderByMap.get(val)
-                        if (order) {
-                            setOrderBy(order.orderBy)
-                            setAscending(order.ascending)
-                            setSelectedOrderBy(val)
-                        }
-                    }}
-                    options={[
-                        {label: "Most approved ↓ (default)", value: 'most_approved'},
-                        {label: "Least approved ↑", value: 'least_approved'},
-                        {label: "Most popular ↓", value: 'most_popular'},
-                        {label: "Least popular ↑", value: 'least_popular'},
-                        {label: "Most recent ↓", value: 'most_recent'},
-                        {label: "Least recent ↑", value: 'least_recent'},
-                        {label: "Most upvotes ↓", value: 'most_upvotes'},
-                        {label: "Most downvotes ↓", value: 'most_downvotes'},
-                    ]}
-                />
+                <div className="flex gap-2 flex-col w-full md:w-auto md:flex-row">
+                    <FancySelect
+                        ariaLabel="Filter by category"
+                        value={selectedCategoryName}
+                        onChangeAction={setSelectedCategoryName}
+                        options={[
+                            {label: "All categories", value: ''},
+                            ...categories.map((c: string) => ({label: c, value: c})),
+                        ]}
+                    />
+                    <FancySelect
+                        ariaLabel="Sort polls"
+                        value={selectedOrderBy}
+                        onChangeAction={(val: string) => {
+                            const order = OrderByMap.get(val)
+                            if (order) {
+                                setOrderBy(order.orderBy)
+                                setAscending(order.ascending)
+                                setSelectedOrderBy(val)
+                            }
+                        }}
+                        options={[
+                            {label: "Most approved ↓ (default)", value: 'most_approved'},
+                            {label: "Least approved ↑", value: 'least_approved'},
+                            {label: "Most popular ↓", value: 'most_popular'},
+                            {label: "Least popular ↑", value: 'least_popular'},
+                            {label: "Most recent ↓", value: 'most_recent'},
+                            {label: "Least recent ↑", value: 'least_recent'},
+                            {label: "Most upvotes ↓", value: 'most_upvotes'},
+                            {label: "Most downvotes ↓", value: 'most_downvotes'},
+                        ]}
+                    />
+                </div>
             </section>
+
             <PaginationBar
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -169,7 +171,7 @@ export default function PollList({
             />
             {/* TOPICS*/}
             <section
-                className="max-h-[65vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900">
+                className="lg:overflow-y-auto lg:pr-1 lg:scrollbar lg:scrollbar-thumb-rounded lg:scrollbar-thumb-emerald-900 lg:scrollbar-track-rounded lg:scrollbar-track-zinc-900">
                 <ul className="grid gap-3">
                     <SessionProvider>
                         {polls.map((t) => (
@@ -201,6 +203,6 @@ export default function PollList({
                 }}
                 selection={false}
             />
-        </>
+        </div>
     );
 }

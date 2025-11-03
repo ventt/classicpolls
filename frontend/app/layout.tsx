@@ -1,7 +1,7 @@
 import "./globals.css";
 import type {Metadata, Viewport} from "next";
 import React from "react";
-
+import SiteHeader from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
     title: "Classic Polls - The Classic+ voting site",
@@ -15,12 +15,14 @@ export const viewport: Viewport = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body className="min-h-screen bg-gradient-to-t from-lime-900 via-emerald-800 to-yellow-950 sm:bg-[url(/wallpaper.webp)] sm:bg-cover sm:bg-center sm:bg-fixed sm:bg-no-repeat
+        <body className="min-h-screen bg-gradient-to-t from-yellow-950 via-emerald-900 to-yellow-950 lg:bg-[url(/wallpaper.webp)] lg:bg-cover sm:bg-center lg:bg-fixed lg:bg-no-repeat
                             overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900"
         >
-        <div className="min-h-screen  bg-black/70 backdrop-blur-sm ">
-            <div className="flex justify-self-center m-0 w-[70%]">
-                <main className="flex flex-col gap-4 w-full pt-2">
+        <div className="min-h-screen bg-black/60 lg:bg-black/70 backdrop-blur-sm">
+            <div
+                className="flex flex-col w-full pr-2 pl-2 md:pr-4 md:pl-4 lg:pr-0 lg:pl-0 lg:m-0 lg:w-[70%] gap-2 justify-self-center">
+                <SiteHeader/>
+                <main className="flex flex-col gap-4 pt-2 pb-6 lg:pb-0">
                     {children}
                 </main>
             </div>
@@ -29,8 +31,3 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         </html>
     );
 }
-// 19 10 3
-// yellow-950
-// emerald-300
-// lime-300
-//67,47,21

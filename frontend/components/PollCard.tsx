@@ -113,7 +113,8 @@ export default function PollCard({
         : `/poll/${pollDetails.id}`;
 
     return (
-        <li className={`border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`} ref={inViewRef}>
+        <li className={`flex flex-col min-w-0 border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`}
+            ref={inViewRef}>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <Link href={`/poll/${pollDetails.id}`} className="block" prefetch={false}>
@@ -222,7 +223,7 @@ export default function PollCard({
                 </div>
             </div>
 
-            <div className="mt-3">
+            <div className="flex flex-col mt-3">
                 <div className="h-2 w-full rounded-full bg-zinc-800 overflow-hidden">
                     <div className="h-full bg-emerald-500 transition-all ease-out duration-500"
                          style={{width: `${votePercentage}%`}}/>

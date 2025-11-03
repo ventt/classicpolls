@@ -82,28 +82,25 @@ export default function FancySelect({
     }
 
     return (
-        <div className="relative w-56" onKeyDown={onKeyDown}>
+        <div className="flex relative w-full md:w-56" onKeyDown={onKeyDown}>
             <button
                 ref={btnRef}
                 type="button"
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-label={ariaLabel}
-                className={cn("inline-flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800 cursor-pointer w-56", className)}
                 onClick={() => setOpen((o) => !o)}
+                className={cn(
+                    "flex w-full min-w-0 items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800 cursor-pointer",
+                    className
+                )}
             >
-        <span className={`truncate ${selected ? "" : "text-zinc-500"}`}>
-          {selected ? selected.label : placeholder}
-        </span>
-                <svg width="16" height="16" viewBox="0 0 24 24" className="text-zinc-400">
-                    <path
-                        d="M7 10l5 5 5-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
+            <span className={cn("min-w-0 flex-1 truncate text-left", selected ? "" : "text-zinc-500")}>
+              {selected ? selected.label : placeholder}
+            </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" className="text-zinc-400 shrink-0">
+                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                          strokeLinejoin="round"/>
                 </svg>
             </button>
 
@@ -111,7 +108,10 @@ export default function FancySelect({
                 <div
                     ref={listRef}
                     role="listbox"
-                    className={cn("absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900", openUp ? "bottom-full mb2" : "")}
+                    className={cn(
+                        "absolute z-50 mt-2 max-h-64 overflow-auto rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl w-full scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900",
+                        openUp ? "bottom-full mb2" : ""
+                    )}
                 >
                     {options.length === 0 ? (
                         <div className="px-3 py-2 text-sm text-zinc-500">No options</div>
@@ -124,28 +124,25 @@ export default function FancySelect({
                                     key={opt.value}
                                     role="option"
                                     aria-selected={isSelected}
-                                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between cursor-pointer
-                    ${isActive ? "bg-zinc-800" : ""}
-                    ${isSelected ? "text-white" : "text-zinc-200"}`}
+                                    type="button"
                                     onMouseEnter={() => setActiveIndex(i)}
                                     onClick={() => {
                                         onChangeAction(opt.value);
                                         setOpen(false);
                                         btnRef.current?.focus();
                                     }}
-                                    type="button"
+                                    className={cn(
+                                        "w-full text-left px-3 py-2 text-sm flex items-center justify-between cursor-pointer",
+                                        isActive ? "bg-zinc-800" : "",
+                                        isSelected ? "text-white" : "text-zinc-200"
+                                    )}
                                 >
-                                    <span className="truncate">{opt.label}</span>
+                                    <span className="min-w-0 flex-1 truncate">{opt.label}</span>
                                     {isSelected ? (
-                                        <svg width="16" height="16" viewBox="0 0 24 24" className="text-emerald-800">
-                                            <path
-                                                d="M20 6L9 17l-5-5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
+                                        <svg width="16" height="16" viewBox="0 0 24 24"
+                                             className="text-emerald-800 shrink-0">
+                                            <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" strokeWidth="2"
+                                                  strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
                                     ) : null}
                                 </button>

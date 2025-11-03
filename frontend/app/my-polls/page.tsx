@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SiteHeader from "@/components/SiteHeader";
 import PollList from "@/components/PollList";
 import {fetchCategories} from "@/lib/postgrest/category";
 import {getServerAuth} from "@/lib/auth";
@@ -20,7 +19,6 @@ export default async function MyPollsPage() {
 
     return (
         <>
-            <SiteHeader/>
             {!!pollDetails.count ? (
                 <>
                     <div className="flex items-center justify-between mt-2">

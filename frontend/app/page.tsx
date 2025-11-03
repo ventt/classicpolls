@@ -1,4 +1,3 @@
-import SiteHeader from "@/components/SiteHeader";
 import {fetchCategories} from "@/lib/postgrest/category";
 import PollList from "@/components/PollList";
 import {fetchPollsDetails} from "@/app/actions";
@@ -51,7 +50,6 @@ export default async function Page() {
 
     return (
         <>
-            <SiteHeader/>
             <section
                 className="relative rounded-xl border border-emerald-600/30
                            bg-gradient-to-b from-emerald-900/30 via-zinc-900/30 to-zinc-900/20

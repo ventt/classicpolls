@@ -1,5 +1,4 @@
 'use server'
-import SiteHeader from "@/components/SiteHeader";
 import {SignInButton} from "@/components/AuthClientButtons";
 import {getServerAuth} from "@/lib/auth";
 import {headers} from "next/headers";
@@ -72,7 +71,6 @@ export default async function Page() {
 
     return (
         <>
-            <SiteHeader/>
             <div
                 className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
                 {/* Intro */}
