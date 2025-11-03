@@ -72,7 +72,7 @@ export default async function Page() {
     return (
         <>
             <div
-                className="max-h-[90vh] overflow-y-auto pr-1 scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900 space-y-6">
+                className="lg:max-h-[90vh] lg:overflow-y-auto lg:pr-1 lg:scrollbar lg:scrollbar-thumb-rounded lg:scrollbar-thumb-emerald-900 lg:scrollbar-track-rounded lg:scrollbar-track-zinc-900 space-y-6">
                 {/* Intro */}
                 <section className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6">
                     <h1 className="text-2xl font-semibold text-emerald-200 tracking-tight">Learn more</h1>
@@ -86,7 +86,7 @@ export default async function Page() {
                 </section>
 
                 {/* How it works */}
-                <section className="grid gap-6 lg:grid-cols-3">
+                <section className="grid gap-6 xl:grid-cols-3">
                     <div className="rounded-xl border border-emerald-600/20 bg-zinc-900/40 p-6 flex flex-col">
                         <h2 className="text-xl font-semibold text-emerald-200">1) Browse community polls</h2>
                         <p className="mt-2 text-zinc-300">
