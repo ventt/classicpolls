@@ -26,7 +26,7 @@ CREATE POLICY user_insert_policy ON api.poll FOR INSERT TO web_user
         AND LENGTH(title) >= 10
         AND (SELECT COUNT(*)
              FROM api.poll p
-             WHERE p.user_sub = jwt_sub()) < 100
+             WHERE p.user_sub = jwt_sub()) < 120
     );
 
 --changeset andras:delete-policy-poll-table runOnChange:true
