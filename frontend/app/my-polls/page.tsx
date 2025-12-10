@@ -1,9 +1,9 @@
 import Link from "next/link";
 import {fetchCategories} from "@/lib/postgrest/category";
 import {getServerAuth} from "@/lib/auth";
-import {fetchPollsDetails} from "@/app/actions";
 import {redirect} from "next/navigation";
 import PollListContainer from "@/components/PollListContainer";
+import {fetchPollsDetails} from "@/lib/data/poll-details";
 
 
 export default async function MyPollsPage() {

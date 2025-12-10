@@ -19,5 +19,5 @@ export const OrderByOptions = new Map<string, { orderBy: OrderByColumns; ascendi
 
 export const defaults = {
     limit: 20,
-    orderBy: 'most_approved',
+    orderBy: 'most_popular',
 }

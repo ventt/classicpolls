@@ -6,13 +6,13 @@ update:
 	git reset --hard origin/main
 	@echo "Repository updated successfully."
 	@echo "Rebuilding and restarting the application..."
-	docker-compose up -d --build --pull=always --remove-orphans
+	docker compose up -d --build --pull=always --remove-orphans
 	@echo "Application restarted successfully."
 
 .PHONY: watch
 watch:
 	@echo "Tailing application logs..."
-	docker-compose logs -f
+	docker compose logs -f
 
 .PHONY: update-watch
 update-watch: update watch

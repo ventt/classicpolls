@@ -8,6 +8,7 @@ import {addPollVote} from "@/app/actions";
 import {signIn} from "next-auth/react";
 import {useOnInView} from "react-intersection-observer";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {useRouter} from "next/navigation";
 
 export default function PollCard({
                                      initialPollDetails,
@@ -24,6 +25,7 @@ export default function PollCard({
     updatedPollDetailsList?: PollDetails[]; // Used to refresh poll details periodically
     inViewAction?: (inView: boolean, pollId: string) => void;
 }) {
+    const router = useRouter()
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
     const [voteInProgress, setVoteInProgress] = useState<boolean>(false);
 
@@ -93,10 +95,11 @@ export default function PollCard({
         });
     }
 
-    const setAnchorToPoll = (pollId: string) => {
+    const onHover = (pollId: string) => {
         const url = new URL(window.location.href);
         url.hash = pollId
         window.history.replaceState({}, '', url.toString());
+        router.prefetch(`/poll/${pollId}`);
     }
 
     const resetAnchor = () => {
@@ -124,7 +127,7 @@ export default function PollCard({
             ref={inViewRef}>
             <div className="flex items-start justify-between gap-3"
                  id={pollDetails.id}
-                 onMouseEnter={() => setAnchorToPoll(pollDetails.id)}
+                 onMouseEnter={() => onHover(pollDetails.id)}
                  onMouseLeave={resetAnchor}
             >
                 <div className="min-w-0">
