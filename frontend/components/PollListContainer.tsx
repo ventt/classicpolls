@@ -41,6 +41,17 @@ export default function PollListContainer({
     const goPrev = () => setOffset((current) => Math.max(0, current - limit));
     const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
 
+    const setOrderByAndResetOffset = (value: string) => {
+        setOrderBy(value);
+        setOffset(0);
+    }
+
+    const setCategoryNameAndResetOffset = (value: string) => {
+        setCategoryName(value);
+        setOffset(0);
+    }
+
+
     return (
         <div className="flex lg:max-h-[81vh] flex-col gap-3">
             <section className="flex flex-col md:flex-row gap-2 items-center">
@@ -48,13 +59,16 @@ export default function PollListContainer({
                     className="flex w-full flex-1 border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
                     placeholder="Search..."
                     value={searchTerm}
-                    onChange={event => setSearchTerm(event.target.value)}
+                    onChange={event => {
+                        setOffset(0)
+                        setSearchTerm(event.target.value)
+                    }}
                 />
                 <div className="flex gap-2 flex-col w-full md:w-auto md:flex-row">
                     <FancySelect
                         ariaLabel="Filter by category"
                         value={categoryName}
-                        onChangeAction={setCategoryName}
+                        onChangeAction={setCategoryNameAndResetOffset}
                         disabled={isLoading}
                         options={[
                             {label: "All categories", value: ''},
@@ -64,13 +78,13 @@ export default function PollListContainer({
                     <FancySelect
                         ariaLabel="Sort polls"
                         value={orderBy}
-                        onChangeAction={setOrderBy}
+                        onChangeAction={setOrderByAndResetOffset}
                         disabled={isLoading}
                         options={[
-                            {label: "Most approved ↓ (default)", value: 'most_approved'},
-                            {label: "Least approved ↑", value: 'least_approved'},
-                            {label: "Most popular ↓", value: 'most_popular'},
+                            {label: "Most popular ↓ (default)", value: 'most_popular'},
                             {label: "Least popular ↑", value: 'least_popular'},
+                            {label: "Most approved ↓", value: 'most_approved'},
+                            {label: "Least approved ↑", value: 'least_approved'},
                             {label: "Most recent ↓", value: 'most_recent'},
                             {label: "Least recent ↑", value: 'least_recent'},
                             {label: "Most upvotes ↓", value: 'most_upvotes'},
@@ -96,7 +110,7 @@ export default function PollListContainer({
             <section
                 className="lg:overflow-y-auto lg:pr-1 lg:scrollbar lg:scrollbar-thumb-rounded lg:scrollbar-thumb-emerald-900 lg:scrollbar-track-rounded lg:scrollbar-track-zinc-900">
                 <ul className="grid gap-3">
-                    <Suspense fallback={<LoadingPollCards/>}>
+                    <Suspense fallback={<LoadingPollCards limit={limit}/>}>
                         <PollList initPollDetailsList={initPollDetailsList}
                                   limit={limit}
                                   offset={offset}
@@ -128,9 +142,9 @@ export default function PollListContainer({
     );
 }
 
-function LoadingPollCards() {
+function LoadingPollCards({limit}: { limit: number }) {
     return <ul>
-        {Array.from({length: 5}).map((_, index) => (
+        {Array.from({length: limit}).map((_, index) => (
             <LoadingPollCard key={index}/>
         ))}
     </ul>

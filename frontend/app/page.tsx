@@ -1,11 +1,11 @@
 import {fetchCategories} from "@/lib/postgrest/category";
-import {fetchPollsDetails} from "@/app/actions";
 import {getServerAuth} from "@/lib/auth";
 import Link from "next/link";
 import {PollDetails} from "@/lib/model/poll-details";
 import {headers} from "next/headers";
 import {defaults, OrderByOptions} from "@/app/poll-details-request-helper";
 import PollListContainer from "@/components/PollListContainer";
+import {fetchPollsDetails} from "@/lib/data/poll-details";
 
 
 function jsonLdForPollList(polls: PollDetails[], host: string) {
@@ -84,9 +84,9 @@ export default async function Page({
                 </p>
             </section>
             <PollListContainer initPollDetailsList={pollDetails.data}
-                      initTotal={pollDetails.count}
-                      categories={categories}
-                      userSub={session?.user.id}/>
+                               initTotal={pollDetails.count}
+                               categories={categories}
+                               userSub={session?.user.id}/>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
