@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body className="min-h-screen bg-gradient-to-t from-yellow-950 via-emerald-900 to-yellow-950 lg:bg-[url(/wallpaper.webp)] lg:bg-cover sm:bg-center lg:bg-fixed lg:bg-no-repeat
+        <body className="min-h-screen bg-gradient-to-t from-yellow-950 via-emerald-900 to-yellow-950 lg:bg-[url(/wallpaper.avif)] lg:bg-cover sm:bg-center lg:bg-fixed lg:bg-no-repeat
                             overflow-y-auto scrollbar scrollbar-thumb-rounded scrollbar-thumb-emerald-900 scrollbar-track-rounded scrollbar-track-zinc-900"
         >
         <div className="min-h-screen bg-black/60 lg:bg-black/70 backdrop-blur-sm">
