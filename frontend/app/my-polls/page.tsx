@@ -1,9 +1,9 @@
 import Link from "next/link";
-import PollList from "@/components/PollList";
 import {fetchCategories} from "@/lib/postgrest/category";
 import {getServerAuth} from "@/lib/auth";
 import {fetchPollsDetails} from "@/app/actions";
 import {redirect} from "next/navigation";
+import PollListContainer from "@/components/PollListContainer";
 
 
 export default async function MyPollsPage() {
@@ -30,10 +30,12 @@ export default async function MyPollsPage() {
                             New Poll
                         </Link>
                     </div>
-                    <PollList initPollDetailsList={pollDetails.data} initTotal={pollDetails.data}
-                              initPageSize={pollDetails.count} categories={categories}
-                              isUsersList={true}
-                              userSub={session?.user.id}/>
+                    <PollListContainer
+                        initPollDetailsList={pollDetails.data}
+                        initTotal={pollDetails.count}
+                        categories={categories}
+                        isUsersList={true}
+                        userSub={session?.user.id}/>
                 </>
             ) : (
                 <div className="flex items-center justify-center">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import PollInteractions from "@/app/poll/PollInteractions";
@@ -147,11 +146,11 @@ export default async function PollPage({params}: { params: Promise<{ id: string 
 
             <PollInteractions initialPollDetails={pollDetails} votes={votes} session={session}/>
 
-            <div className="mt-6">
-                <Link href="/" className="text-emerald-400 underline">
-                    ← Back to list
-                </Link>
-            </div>
+            {/*<div className="mt-6">*/}
+            {/*    <Link href="/" className="text-emerald-400 underline">*/}
+            {/*        ← Back to list*/}
+            {/*    </Link>*/}
+            {/*</div>*/}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{

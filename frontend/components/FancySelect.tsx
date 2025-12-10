@@ -13,6 +13,7 @@ export default function FancySelect({
                                         className,
                                         ariaLabel,
                                         openUp = false,
+                                        disabled = false,
                                     }: {
     value?: string;
     onChangeAction: (val: string) => void;
@@ -21,6 +22,7 @@ export default function FancySelect({
     className?: string;
     ariaLabel?: string;
     openUp?: boolean;
+    disabled?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -89,10 +91,11 @@ export default function FancySelect({
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-label={ariaLabel}
+                disabled={disabled}
                 onClick={() => setOpen((o) => !o)}
                 className={cn(
-                    "flex w-full min-w-0 items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800 cursor-pointer",
-                    className
+                    "flex w-full min-w-0 items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-100 px-3 py-2 gap-2 enabled:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800 cursor-pointer disabled:text-gray-600 disabled:cursor-not-allowed",
+                    className,
                 )}
             >
             <span className={cn("min-w-0 flex-1 truncate text-left", selected ? "" : "text-zinc-500")}>

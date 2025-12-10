@@ -10,6 +10,7 @@ export default function PaginationBar({
                                           pageSize,
                                           onPageSizeSelectAction,
                                           selection = true,
+                                          disabled = false,
                                       }: {
     currentPage: number;
     totalPages: number;
@@ -18,6 +19,7 @@ export default function PaginationBar({
     pageSize: number;
     onPageSizeSelectAction: (n: number) => void;
     selection?: boolean;
+    disabled?: boolean;
 }) {
     return (
         <section className="flex items-center justify-between text-sm text-zinc-300">
@@ -31,6 +33,7 @@ export default function PaginationBar({
                         ariaLabel="Page size"
                         value={String(pageSize)}
                         onChangeAction={(v) => onPageSizeSelectAction(Number(v))}
+                        disabled={disabled}
                         options={[
                             {label: "20 / page", value: "20"},
                             {label: "40 / page", value: "40"},
@@ -43,14 +46,14 @@ export default function PaginationBar({
                     <button
                         className="px-3 py-1 rounded-lg border border-zinc-700 enabled:hover:bg-zinc-800 disabled:opacity-50 cursor-pointer disabled:cursor-default"
                         onClick={onPrevAction}
-                        disabled={currentPage <= 1}
+                        disabled={currentPage <= 1 || disabled}
                     >
                         Prev
                     </button>
                     <button
                         className="px-3 py-1 rounded-lg border border-zinc-700 enabled:hover:bg-zinc-800 disabled:opacity-50 cursor-pointer disabled:cursor-default"
                         onClick={onNextAction}
-                        disabled={currentPage >= totalPages}
+                        disabled={currentPage >= totalPages || disabled}
                     >
                         Next
                     </button>

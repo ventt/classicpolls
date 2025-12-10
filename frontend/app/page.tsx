@@ -1,10 +1,11 @@
 import {fetchCategories} from "@/lib/postgrest/category";
-import PollList from "@/components/PollList";
 import {fetchPollsDetails} from "@/app/actions";
 import {getServerAuth} from "@/lib/auth";
 import Link from "next/link";
 import {PollDetails} from "@/lib/model/poll-details";
 import {headers} from "next/headers";
+import {defaults, OrderByOptions} from "@/app/poll-details-request-helper";
+import PollListContainer from "@/components/PollListContainer";
 
 
 function jsonLdForPollList(polls: PollDetails[], host: string) {
@@ -41,11 +42,29 @@ function jsonLdForPollList(polls: PollDetails[], host: string) {
     };
 }
 
-export default async function Page() {
-    const initPageSize = 20
+export default async function Page({
+                                       searchParams,
+                                   }: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+    const {
+        limit = String(defaults.limit),
+        offset = '0',
+        orderBy = defaults.orderBy,
+        category = null,
+        searchTerm = null
+    } = await searchParams;
+
     const categories = await fetchCategories();
     const session = await getServerAuth();
-    const pollDetails = await fetchPollsDetails(initPageSize, 0, 'approval_score', false);
+    const pollDetails = await fetchPollsDetails(
+        Number(limit),
+        Number(offset),
+        OrderByOptions.get(orderBy as string)!!.orderBy,
+        OrderByOptions.get(orderBy as string)!!.ascending,
+        category as string | null,
+        searchTerm as string | null,
+    );
     const host = (await headers()).get("host") ?? "";
 
     return (
@@ -64,8 +83,10 @@ export default async function Page() {
                         </span>
                 </p>
             </section>
-            <PollList initPollDetailsList={pollDetails.data} initTotal={pollDetails.count}
-                      initPageSize={initPageSize} categories={categories} userSub={session?.user.id}/>
+            <PollListContainer initPollDetailsList={pollDetails.data}
+                      initTotal={pollDetails.count}
+                      categories={categories}
+                      userSub={session?.user.id}/>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{

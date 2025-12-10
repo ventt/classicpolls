@@ -1,82 +1,114 @@
 "use client";
 
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import PollCard from "@/components/PollCard";
 import {PollDetails} from "@/lib/model/poll-details";
-import FancySelect from "@/components/FancySelect";
-import PaginationBar from "@/app/pagination-bar";
 import {fetchPollsDetails} from "@/app/actions";
 import {SessionProvider} from "next-auth/react";
 import {deletePoll} from "@/app/my-polls/my-polls";
-
-enum OrderBy {
-    Upvotes = "upvotes",
-    Downvotes = "downvotes",
-    ApprovalScore = "approval_score",
-    TotalVotes = "total_votes",
-    Recent = "created_at",
-}
-
-const OrderByMap = new Map<string, { orderBy: OrderBy; ascending: boolean }>([
-    ['most_approved', {orderBy: OrderBy.ApprovalScore, ascending: false}],
-    ['least_approved', {orderBy: OrderBy.ApprovalScore, ascending: true}],
-    ['most_recent', {orderBy: OrderBy.Recent, ascending: false}],
-    ['least_recent', {orderBy: OrderBy.Recent, ascending: true}],
-    ['most_popular', {orderBy: OrderBy.TotalVotes, ascending: false}],
-    ['least_popular', {orderBy: OrderBy.TotalVotes, ascending: true}],
-    ['most_upvotes', {orderBy: OrderBy.Upvotes, ascending: false}],
-    ['most_downvotes', {orderBy: OrderBy.Downvotes, ascending: false}],
-]);
+import {OrderByOptions} from "@/app/poll-details-request-helper";
+import LoadingPollCard from "@/components/LoadingPollCard";
 
 export default function PollList({
                                      initPollDetailsList,
-                                     initTotal,
-                                     initPageSize,
-                                     categories,
                                      isUsersList = false,
-                                     userSub
+                                     onTotalChangeAction,
+                                     onLoadingChangeAction,
+                                     userSub,
+                                     limit,
+                                     offset,
+                                     orderBy,
+                                     categoryName,
+                                     searchTerm,
                                  }: {
     initPollDetailsList: PollDetails[],
-    initTotal: number,
-    initPageSize: number,
-    categories: string[],
     isUsersList?: boolean,
-    userSub?: string
+    userSub?: string,
+
+    // Search params
+    limit: number,
+    offset: number,
+    orderBy: string,
+    categoryName?: string,
+    searchTerm?: string,
+
+    onTotalChangeAction?: (total: number) => void,
+    onLoadingChangeAction?: (loading: boolean) => void,
 }) {
     const [polls, setPolls] = useState<PollDetails[]>(initPollDetailsList);
     const [updatedPolls, setUpdatedPolls] = useState<PollDetails[]>([]);
+    const [loading, setLoading] = useState<boolean | null>(null);
+    const scrollRef = useRef<HTMLUListElement>(null)
 
-    const [total, setTotal] = useState(initTotal);
-    const [limit, setLimit] = useState(initPageSize);
-    const [offset, setOffset] = useState(0);
-    const [orderBy, setOrderBy] = useState<OrderBy>(OrderBy.ApprovalScore);
-    const [ascending, setAscending] = useState(false);
-
-    const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
-    const [selectedOrderBy, setSelectedOrderBy] = useState<string>('most_approved');
-    const [searchTerm, setSearchTerm] = useState<string>('');
-
+    // Scroll to top when finished loading
     useEffect(() => {
-        const category = selectedCategoryName == '' ? undefined : selectedCategoryName;
+        if (loading === false) {
+            const hash = window.location.hash;
+            if (hash) {
+                const element = document.getElementById(hash.substring(1));
+                if (element) {
+                    element.scrollIntoView({behavior: 'smooth'});
+                }
+
+                // Remove hash from url without reloading
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            } else {
+                scrollRef.current?.children.item(0)?.scrollIntoView();
+            }
+        }
+    }, [loading]);
+
+    // ----- Fetch polls when search params change -----
+    useEffect(() => {
+        const category = categoryName == '' ? undefined : categoryName;
+
+        setLoading(true);
+        if (onLoadingChangeAction!!) {
+            onLoadingChangeAction(true);
+        }
 
         fetchPollsDetails(
             limit,
             offset,
-            orderBy,
-            ascending,
+            OrderByOptions.get(orderBy)!!.orderBy,
+            OrderByOptions.get(orderBy)!!.ascending,
             category,
             searchTerm == '' ? undefined : searchTerm,
             isUsersList ? userSub : undefined,
         ).then(response => {
             setUpdatedPolls([]);
             setPolls(response.data);
-            setTotal(response.count);
+            if (onTotalChangeAction!!) {
+                onTotalChangeAction(response.count);
+            }
+
+            setLoading(false);
+            if (onLoadingChangeAction!!) {
+                onLoadingChangeAction(false);
+            }
+
+            // Update url search params
+            const url = new URL(window.location.href);
+            url.searchParams.set('limit', limit.toString());
+            url.searchParams.set('offset', offset.toString());
+            url.searchParams.set('orderBy', orderBy);
+            if (categoryName) {
+                url.searchParams.set('category', categoryName);
+            } else {
+                url.searchParams.delete('category');
+            }
+            if (searchTerm) {
+                url.searchParams.set('search', searchTerm);
+            } else {
+                url.searchParams.delete('search');
+            }
+            window.history.replaceState({}, '', url.toString());
         }).catch(() => {
             if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
                 window.location.reload();
             }
         });
-    }, [limit, offset, orderBy, ascending, selectedCategoryName, searchTerm]);
+    }, [limit, offset, orderBy, categoryName, searchTerm]);
 
     // ----- Auto-refresh visible polls -----
     const [visiblePollIds, setVisiblePollIds] = useState<Set<string>>(new Set());
@@ -89,7 +121,7 @@ export default function PollList({
                     }
                 })
             }
-        }, 5000);
+        }, 60 * 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -104,105 +136,35 @@ export default function PollList({
         }
     }
 
-    const totalPages = useMemo(() => Math.ceil(total / limit), [total, limit])
-    const currentPage = useMemo(() => offset / limit + 1, [offset, limit])
-
-    const goPrev = () => setOffset((current) => Math.max(0, current - limit));
-    const goNext = () => setOffset((current) => Math.min((totalPages - 1) * limit, current + limit));
 
     const onDelete = (pollId: string) => {
         deletePoll(pollId).then(() => setPolls(polls.filter(poll => poll.id !== pollId)))
     }
 
     return (
-        <div className="flex lg:max-h-[81vh] flex-col gap-3">
-            <section className="flex flex-col md:flex-row gap-2 items-center">
-                <input
-                    className="flex w-full flex-1 border border-zinc-800 bg-zinc-900 text-zinc-100 rounded-lg px-3 py-2 placeholder:text-zinc-500 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-800"
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={event => setSearchTerm(event.target.value)}
-                />
-                <div className="flex gap-2 flex-col w-full md:w-auto md:flex-row">
-                    <FancySelect
-                        ariaLabel="Filter by category"
-                        value={selectedCategoryName}
-                        onChangeAction={setSelectedCategoryName}
-                        options={[
-                            {label: "All categories", value: ''},
-                            ...categories.map((c: string) => ({label: c, value: c})),
-                        ]}
-                    />
-                    <FancySelect
-                        ariaLabel="Sort polls"
-                        value={selectedOrderBy}
-                        onChangeAction={(val: string) => {
-                            const order = OrderByMap.get(val)
-                            if (order) {
-                                setOrderBy(order.orderBy)
-                                setAscending(order.ascending)
-                                setSelectedOrderBy(val)
-                            }
-                        }}
-                        options={[
-                            {label: "Most approved ↓ (default)", value: 'most_approved'},
-                            {label: "Least approved ↑", value: 'least_approved'},
-                            {label: "Most popular ↓", value: 'most_popular'},
-                            {label: "Least popular ↑", value: 'least_popular'},
-                            {label: "Most recent ↓", value: 'most_recent'},
-                            {label: "Least recent ↑", value: 'least_recent'},
-                            {label: "Most upvotes ↓", value: 'most_upvotes'},
-                            {label: "Most downvotes ↓", value: 'most_downvotes'},
-                        ]}
-                    />
-                </div>
-            </section>
-
-            <PaginationBar
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPrevAction={goPrev}
-                onNextAction={goNext}
-                pageSize={limit}
-                onPageSizeSelectAction={(n) => {
-                    setLimit(n)
-                    setOffset(0)
-                }}
-            />
-            {/* TOPICS*/}
-            <section
-                className="lg:overflow-y-auto lg:pr-1 lg:scrollbar lg:scrollbar-thumb-rounded lg:scrollbar-thumb-emerald-900 lg:scrollbar-track-rounded lg:scrollbar-track-zinc-900">
-                <ul className="grid gap-3">
-                    <SessionProvider>
-                        {polls.map((t) => (
-                            <PollCard
-                                key={t.id}
-                                initialPollDetails={t}
-                                loggedIn={!!userSub}
-                                isUsersList={isUsersList}
-                                onDeleteAction={onDelete}
-                                updatedPollDetailsList={updatedPolls}
-                                inViewAction={onVisibilityChange}
-                            />
-                        ))}
-                        {!polls.length && (
-                            <li className="text-zinc-400 text-sm">No polls found.</li>
-                        )}
-                    </SessionProvider>
-                </ul>
-            </section>
-            <PaginationBar
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPrevAction={goPrev}
-                onNextAction={goNext}
-                pageSize={limit}
-                onPageSizeSelectAction={(n) => {
-                    setLimit(n)
-                    setOffset(0)
-                }}
-                selection={false}
-            />
-        </div>
+        <section
+            className="lg:overflow-y-auto lg:pr-1 lg:scrollbar lg:scrollbar-thumb-rounded lg:scrollbar-thumb-emerald-900 lg:scrollbar-track-rounded lg:scrollbar-track-zinc-900">
+            <ul className="grid gap-3" ref={scrollRef}>
+                <SessionProvider>
+                    {!loading && polls.map((t) => (
+                        <PollCard
+                            key={t.id}
+                            initialPollDetails={t}
+                            loggedIn={!!userSub}
+                            isUsersList={isUsersList}
+                            onDeleteAction={onDelete}
+                            updatedPollDetailsList={updatedPolls}
+                            inViewAction={onVisibilityChange}
+                        />
+                    ))}
+                    {!polls.length && (
+                        <li className="text-zinc-400 text-sm">No polls found.</li>
+                    )}
+                    {loading && Array.from({length: 10}).map((_, index) => (
+                        <LoadingPollCard key={index}/>
+                    ))}
+                </SessionProvider>
+            </ul>
+        </section>
     );
 }

@@ -57,32 +57,34 @@ export default function PollCard({
 
     const vote = function (choice: boolean) {
         setVoteInProgress(true);
-        addPollVote(pollDetails.id, choice).then(() => {
-            let modified = {} as PollDetails;
-            Object.assign(modified, pollDetails);
 
-            modified.user_choice = choice;
+        // Optimistically update the poll details
+        let modified = {} as PollDetails;
+        Object.assign(modified, pollDetails);
 
-            // If user has already voted
-            if (pollDetails.user_choice != null) {
-                if (choice) {
-                    modified.upvotes++;
-                    modified.downvotes--;
-                } else {
-                    modified.upvotes--;
-                    modified.downvotes++;
-                }
+        modified.user_choice = choice;
+
+        // If user has already voted
+        if (pollDetails.user_choice != null) {
+            if (choice) {
+                modified.upvotes++;
+                modified.downvotes--;
             } else {
-                // If user haven't voted
-                if (choice) {
-                    modified.upvotes++;
-                } else {
-                    modified.downvotes++;
-                }
-                modified.total_votes++;
+                modified.upvotes--;
+                modified.downvotes++;
             }
+        } else {
+            // If user haven't voted
+            if (choice) {
+                modified.upvotes++;
+            } else {
+                modified.downvotes++;
+            }
+            modified.total_votes++;
+        }
+        setPollDetails(modified);
 
-            setPollDetails(modified);
+        addPollVote(pollDetails.id, choice).then(() => {
             setVoteInProgress(false);
         }).catch(() => {
             if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
@@ -91,22 +93,15 @@ export default function PollCard({
         });
     }
 
-    let borderClass
-    let cardBg
-    let hoverColor
+    const setAnchorToPoll = (pollId: string) => {
+        const url = new URL(window.location.href);
+        url.hash = pollId
+        window.history.replaceState({}, '', url.toString());
+    }
 
-    if (ratio < 0.4) {
-        borderClass = "border-red-600/70";
-        cardBg = "bg-zinc-900/80";
-        hoverColor = "hover:text-red-600/70";
-    } else if (ratio < 0.7) {
-        borderClass = "border-yellow-600/70";
-        cardBg = "bg-zinc-900/70";
-        hoverColor = "hover:text-yellow-600/70"
-    } else {
-        borderClass = "border-green-600/70";
-        cardBg = "bg-emerald-900/20";
-        hoverColor = "hover:text-green-600/70"
+    const resetAnchor = () => {
+        // Remove hash from url without reloading
+        history.replaceState(null, '', window.location.pathname + window.location.search);
     }
 
     const shareUrl = typeof window !== "undefined"
@@ -114,12 +109,31 @@ export default function PollCard({
         : `/poll/${pollDetails.id}`;
 
     return (
-        <li className={`flex flex-col min-w-0 border ${borderClass} rounded-xl p-4 ${cardBg} shadow-sm transition`}
+        <li className={cn("flex flex-col min-w-0 border rounded-xl p-4 ${cardBg} shadow-sm transition border-gray-600/70 bg-gray-900/20 ",
+            {
+                "border-red-600/70": ratio < 0.4,
+                "border-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
+                "border-green-600/70": ratio >= 0.7,
+                "bg-zinc-900/80": ratio < 0.4,
+                "bg-zinc-900/70": ratio >= 0.4 && ratio < 0.7,
+                "bg-emerald-900/20": ratio >= 0.7,
+                "hover:text-red-600/70": ratio < 0.4,
+                "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
+                "hover:text-green-600/70": ratio >= 0.7,
+            })}
             ref={inViewRef}>
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3"
+                 id={pollDetails.id}
+                 onMouseEnter={() => setAnchorToPoll(pollDetails.id)}
+                 onMouseLeave={resetAnchor}
+            >
                 <div className="min-w-0">
                     <Link href={`/poll/${pollDetails.id}`} className="block" prefetch={false}>
-                        <h3 className={`font-semibold text-lg text-white truncate ${hoverColor}`}>
+                        <h3 className={cn("font-semibold text-lg text-white truncate hover:text-gray-600", {
+                            "hover:text-red-600/70": ratio < 0.4,
+                            "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
+                            "hover:text-green-600/70": ratio >= 0.7,
+                        })}>
                             {pollDetails.title}
                         </h3>
                     </Link>
@@ -144,28 +158,35 @@ export default function PollCard({
                         <>
                             <button
                                 aria-label="Upvote"
-                                className="p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 enabled:hover:bg-emerald-800/50 enabled:active:scale-95 transition enabled:cursor-pointer disabled:bg-emerald-400 disabled:border-emerald-300"
+                                className={cn("p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 enabled:hover:bg-emerald-800/50 enabled:active:scale-95 transition enabled:cursor-pointer",
+                                    {
+                                        "bg-emerald-400 border-emerald-300": pollDetails.user_choice === true,
+                                        "bg-emerald-600 border-emerald-400 animate-pulse": voteInProgress,
+                                    })}
                                 onClick={() => vote(true)}
                                 title="Upvote"
                                 disabled={pollDetails.user_choice === true || voteInProgress}
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                      className={cn("text-emerald-400 transition-all", {
-                                         "text-white": pollDetails.user_choice === true
+                                         "text-white": pollDetails.user_choice === true || voteInProgress
                                      })}>
                                     <path d="M12 4l-7 8h4v8h6v-8h4l-7-8z" fill="currentColor"/>
                                 </svg>
                             </button>
                             <button
                                 aria-label="Downvote"
-                                className="p-2 rounded-lg border border-red-700/60 bg-red-900/30 enabled:hover:bg-red-800/50 enabled:active:scale-95 transition-all enabled:cursor-pointer disabled:bg-red-500"
+                                className={cn("p-2 rounded-lg border border-red-700/60 bg-red-900/30 enabled:hover:bg-red-800/50 enabled:active:scale-95 transition-all enabled:cursor-pointer", {
+                                    "bg-red-500": pollDetails.user_choice === false,
+                                    "bg-red-600 animate-pulse": voteInProgress,
+                                })}
                                 onClick={() => vote(false)}
                                 title="Downvote"
                                 disabled={pollDetails.user_choice === false || voteInProgress}
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                      className={cn("text-red-400 transition-all", {
-                                         "text-white": pollDetails.user_choice === false
+                                         "text-white": pollDetails.user_choice === false || voteInProgress
                                      })}>
                                     <path d="M12 20l7-8h-4V4H9v8H5l7 8z" fill="currentColor"/>
                                 </svg>
