@@ -9,15 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@supabase/postgrest-js": "^2.76.1",
+    "@supabase/postgrest-js": "^2.87.1",
     "@tailwindcss/typography": "^0.5.19",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
-    "jose": "^6.1.0",
+    "jose": "^6.1.3",
     "next": "15.5.6",
     "next-auth": "^4.24.12",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^10.0.0",
     "react-markdown": "^10.1.0",
@@ -32,14 +32,14 @@
     "use-debounce": "^10.0.6"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@eslint/eslintrc": "^3.3.3",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.1",
     "eslint-config-next": "15.5.6",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5"
   },
   "browserslist": [
