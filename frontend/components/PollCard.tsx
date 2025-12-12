@@ -110,21 +110,21 @@ export default function PollCard({
         : `/poll/${pollDetails.id}`;
 
     return (
-        <li className={cn("flex flex-col min-w-0 border rounded-xl p-4 ${cardBg} shadow-sm transition border-gray-600/70 bg-gray-900/20 ",
-            {
-                "border-red-600/70": ratio < 0.4,
-                "border-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
-                "border-green-600/70": ratio >= 0.7,
-                "bg-zinc-900/80": ratio < 0.4,
-                "bg-zinc-900/70": ratio >= 0.4 && ratio < 0.7,
-                "bg-emerald-900/20": ratio >= 0.7,
-                "hover:text-red-600/70": ratio < 0.4,
-                "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
-                "hover:text-green-600/70": ratio >= 0.7,
-            })}
+        <li id={pollDetails.id}
+            className={cn("flex flex-col min-w-0 border rounded-xl p-4 ${cardBg} shadow-sm transition border-gray-600/70 bg-gray-900/20 ",
+                {
+                    "border-red-600/70": ratio < 0.4,
+                    "border-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
+                    "border-green-600/70": ratio >= 0.7,
+                    "bg-zinc-900/80": ratio < 0.4,
+                    "bg-zinc-900/70": ratio >= 0.4 && ratio < 0.7,
+                    "bg-emerald-900/20": ratio >= 0.7,
+                    "hover:text-red-600/70": ratio < 0.4,
+                    "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
+                    "hover:text-green-600/70": ratio >= 0.7,
+                })}
             ref={inViewRef}>
             <div className="flex items-start justify-between gap-3"
-                 id={pollDetails.id}
                  onMouseEnter={() => onHover(pollDetails.id)}
                  onMouseLeave={resetAnchor}
             >

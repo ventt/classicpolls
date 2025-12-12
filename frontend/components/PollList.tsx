@@ -110,7 +110,8 @@ export default function PollList({
     useEffect(() => {
         if (data) {
             const hash = window.location.hash;
-            if (hash) {
+            if (hash && window?.innerWidth >= 1024) {
+                // Only auto-scroll to the top element on large screens, because the overflow is on the ul element
                 setTimeout(() => {
                         const element = document.getElementById(hash.substring(1));
                         if (element) {
@@ -123,8 +124,12 @@ export default function PollList({
                     }
                     , 500);
 
-            } else {
+            } else if (window?.innerWidth >= 1024) {
+                // Only auto-scroll to the top element on large screens (lg and up)
                 scrollRef.current?.children.item(0)?.scrollIntoView();
+            } else {
+                // Scroll to the top of the window on smaller screens
+                window.scrollTo({top: 0});
             }
         }
     }, [data]);

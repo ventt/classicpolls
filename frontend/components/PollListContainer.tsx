@@ -32,7 +32,7 @@ export default function PollListContainer({
     // Search params
     const [limit, setLimit] = useState(Number(searchParams.get('limit')) || defaults.limit);
     const [offset, setOffset] = useState(Number(searchParams.get('offset')) || 0);
-    const [orderBy, setOrderBy] = useState<string>(defaults.orderBy);
+    const [orderBy, setOrderBy] = useState<string>(searchParams.get("orderBy") || defaults.orderBy);
     const [categoryName, setCategoryName] = useState<string>(searchParams.get('category') || '');
     const [searchTerm, setSearchTerm] = useState<string>('');
 
