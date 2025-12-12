@@ -27,7 +27,6 @@ export default function PollCard({
 }) {
     const router = useRouter()
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
-    const [voteInProgress, setVoteInProgress] = useState<boolean>(false);
 
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -58,7 +57,6 @@ export default function PollCard({
     const inViewRef = useOnInView(handleInViewChange);
 
     const vote = function (choice: boolean) {
-        setVoteInProgress(true);
 
         // Optimistically update the poll details
         let modified = {} as PollDetails;
@@ -86,9 +84,7 @@ export default function PollCard({
         }
         setPollDetails(modified);
 
-        addPollVote(pollDetails.id, choice).then(() => {
-            setVoteInProgress(false);
-        }).catch(() => {
+        addPollVote(pollDetails.id, choice).catch(() => {
             if (confirm('Ooops :( Sorry, there was an error on the page, do you want to reload?')) {
                 window.location.reload();
             }
@@ -96,10 +92,12 @@ export default function PollCard({
     }
 
     const onHover = (pollId: string) => {
+        router.prefetch(`/poll/${pollId}`);
+    }
+    const onClick = (pollId: string) => {
         const url = new URL(window.location.href);
         url.hash = pollId
         window.history.replaceState({}, '', url.toString());
-        router.prefetch(`/poll/${pollId}`);
     }
 
     const resetAnchor = () => {
@@ -131,7 +129,8 @@ export default function PollCard({
                  onMouseLeave={resetAnchor}
             >
                 <div className="min-w-0">
-                    <Link href={`/poll/${pollDetails.id}`} className="block" prefetch={false}>
+                    <Link href={`/poll/${pollDetails.id}`} className="block" prefetch={false}
+                          onClick={() => onClick(pollDetails.id)}>
                         <h3 className={cn("font-semibold text-lg text-white truncate hover:text-gray-600", {
                             "hover:text-red-600/70": ratio < 0.4,
                             "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
@@ -146,6 +145,7 @@ export default function PollCard({
 
                         {pollDetails.description && (
                             <Link prefetch={false}
+                                  onClick={() => onClick(pollDetails.id)}
                                   href={`/poll/${pollDetails.id}`}
                                   className="inline-block px-1 py-0.5 text-[10px] text-sm text-purple-400 border border-purple-800 rounded-md hover:bg-purple-800 hover:text-white transition-colors duration-200"
                             >
@@ -164,15 +164,14 @@ export default function PollCard({
                                 className={cn("p-2 rounded-lg border border-emerald-700/60 bg-emerald-900/30 enabled:hover:bg-emerald-800/50 enabled:active:scale-95 transition enabled:cursor-pointer",
                                     {
                                         "bg-emerald-400 border-emerald-300": pollDetails.user_choice === true,
-                                        "bg-emerald-600 border-emerald-400 animate-pulse": voteInProgress,
                                     })}
                                 onClick={() => vote(true)}
                                 title="Upvote"
-                                disabled={pollDetails.user_choice === true || voteInProgress}
+                                disabled={pollDetails.user_choice === true}
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                      className={cn("text-emerald-400 transition-all", {
-                                         "text-white": pollDetails.user_choice === true || voteInProgress
+                                         "text-white": pollDetails.user_choice === true
                                      })}>
                                     <path d="M12 4l-7 8h4v8h6v-8h4l-7-8z" fill="currentColor"/>
                                 </svg>
@@ -181,15 +180,14 @@ export default function PollCard({
                                 aria-label="Downvote"
                                 className={cn("p-2 rounded-lg border border-red-700/60 bg-red-900/30 enabled:hover:bg-red-800/50 enabled:active:scale-95 transition-all enabled:cursor-pointer", {
                                     "bg-red-500": pollDetails.user_choice === false,
-                                    "bg-red-600 animate-pulse": voteInProgress,
                                 })}
                                 onClick={() => vote(false)}
                                 title="Downvote"
-                                disabled={pollDetails.user_choice === false || voteInProgress}
+                                disabled={pollDetails.user_choice === false}
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                      className={cn("text-red-400 transition-all", {
-                                         "text-white": pollDetails.user_choice === false || voteInProgress
+                                         "text-white": pollDetails.user_choice === false
                                      })}>
                                     <path d="M12 20l7-8h-4V4H9v8H5l7 8z" fill="currentColor"/>
                                 </svg>
