@@ -6,7 +6,7 @@ import SiteHeader from "@/components/SiteHeader";
 export const metadata: Metadata = {
     title: "Classic Polls - The Classic+ voting site",
     alternates: {canonical: "/"},
-    description: "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them.",
+    description: "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them. Classic+ survey.",
     appleWebApp: {capable: true, title: "Classic Polls", statusBarStyle: "black-translucent"},
 };
 export const viewport: Viewport = {

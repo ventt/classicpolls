@@ -14,7 +14,7 @@ function jsonLdForPollList(polls: PollDetails[], host: string) {
         "@type": "CollectionPage",
         name: "Classic Polls",
         description:
-            "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them.",
+            "Community-created Classic+ vision polls allowing players to vote on feature ideas and see how the wider WoW community feels about them. Classic+ survey.",
         mainEntity: {
             "@type": "ItemList",
             itemListOrder: "https://schema.org/ItemListOrderAscending",
