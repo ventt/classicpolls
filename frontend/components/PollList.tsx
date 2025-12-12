@@ -90,14 +90,22 @@ export default function PollList({
         }
     );
 
+    // ------- First load detection -------
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+    useEffect(() => {
+        if (!isLoading) {
+            setIsFirstLoad(false);
+        }
+    }, [isLoading]);
+
     const polls = data?.data ?? [];
 
     // ------- External loading callback -------
     useEffect(() => {
         if (onLoadingChangeAction) {
-            onLoadingChangeAction(isLoading);
+            onLoadingChangeAction(isLoading && !isFirstLoad);
         }
-    }, [isLoading, onLoadingChangeAction]);
+    }, [isLoading, isFirstLoad, onLoadingChangeAction]);
 
     // ------- External total callback -------
     useEffect(() => {
@@ -220,7 +228,7 @@ export default function PollList({
                 "animate-pulse": isValidating && !isLoading
             })} ref={scrollRef}>
                 <SessionProvider>
-                    {!isLoading && polls.map((t) => (
+                    {(!isLoading || isFirstLoad) && polls.map((t) => (
                         <PollCard
                             key={t.id}
                             initialPollDetails={t}
@@ -236,7 +244,7 @@ export default function PollList({
                         <li className="text-zinc-400 text-sm">No polls found.</li>
                     )}
 
-                    {isLoading && Array.from({length: limit}).map((_, index) => (
+                    {isLoading && !isFirstLoad && Array.from({length: limit}).map((_, index) => (
                         <LoadingPollCard key={index}/>
                     ))}
                 </SessionProvider>
