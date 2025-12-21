@@ -2,11 +2,10 @@
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
 import {PollDetails} from "@/lib/model/poll-details";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {cn} from "@/lib/utils";
 import {addPollVote} from "@/app/actions";
 import {signIn} from "next-auth/react";
-import {useOnInView} from "react-intersection-observer";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useRouter} from "next/navigation";
 
@@ -15,15 +14,11 @@ export default function PollCard({
                                      loggedIn,
                                      isUsersList,
                                      onDeleteAction,
-                                     updatedPollDetailsList,
-                                     inViewAction
                                  }: {
     initialPollDetails: PollDetails;
     loggedIn: boolean;
     isUsersList: boolean;
     onDeleteAction: (pollId: string) => void;
-    updatedPollDetailsList?: PollDetails[]; // Used to refresh poll details periodically
-    inViewAction?: (inView: boolean, pollId: string) => void;
 }) {
     const router = useRouter()
     const [pollDetails, setPollDetails] = useState<PollDetails>(initialPollDetails);
@@ -35,26 +30,6 @@ export default function PollCard({
         () => (pollDetails.total_votes ? Math.round((pollDetails.upvotes / pollDetails.total_votes) * 100) : 0),
         [pollDetails]
     );
-
-    // Refresh poll details when updatedPollDetailsList changes
-    if (updatedPollDetailsList) {
-        useEffect(() => {
-            const newPollDetails = updatedPollDetailsList.filter(pd => pd.id == pollDetails.id).pop();
-            if (newPollDetails) {
-                // Merge new details into current pollDetails
-                setPollDetails({...pollDetails, ...newPollDetails});
-            }
-        }, [updatedPollDetailsList]);
-    }
-
-    const handleInViewChange = (inView: boolean) => {
-        if (!!inViewAction) {
-            inViewAction(inView, pollDetails.id);
-        }
-    }
-
-    // Call inViewAction when visibility changes
-    const inViewRef = useOnInView(handleInViewChange);
 
     const vote = function (choice: boolean) {
 
@@ -122,8 +97,7 @@ export default function PollCard({
                     "hover:text-red-600/70": ratio < 0.4,
                     "hover:text-yellow-600/70": ratio >= 0.4 && ratio < 0.7,
                     "hover:text-green-600/70": ratio >= 0.7,
-                })}
-            ref={inViewRef}>
+                })}>
             <div className="flex items-start justify-between gap-3"
                  onMouseEnter={() => onHover(pollDetails.id)}
                  onMouseLeave={resetAnchor}
